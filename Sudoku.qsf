@@ -1,0 +1,149 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2013 Altera Corporation
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, Altera MegaCore Function License 
+# Agreement, or other applicable license agreement, including, 
+# without limitation, that your use is for the sole purpose of 
+# programming logic devices manufactured by Altera and sold by 
+# Altera or its authorized distributors.  Please refer to the 
+# applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 64-Bit
+# Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
+# Date created = 17:17:01  April 22, 2016
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		Sudoku_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus II software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone III"
+set_global_assignment -name DEVICE EP3C16F484C6
+set_global_assignment -name TOP_LEVEL_ENTITY system_top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13.1
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:17:01  APRIL 22, 2016"
+set_global_assignment -name LAST_QUARTUS_VERSION 13.1
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (VHDL)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT VHDL -section_id eda_simulation
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+set_location_assignment PIN_P22 -to ps2_clk
+set_location_assignment PIN_P21 -to ps2_dat
+set_location_assignment PIN_F1 -to rst_a
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_location_assignment PIN_F13 -to seg_hex0_d[6]
+set_location_assignment PIN_F12 -to seg_hex0_d[5]
+set_location_assignment PIN_G12 -to seg_hex0_d[4]
+set_location_assignment PIN_H13 -to seg_hex0_d[3]
+set_location_assignment PIN_H12 -to seg_hex0_d[2]
+set_location_assignment PIN_F11 -to seg_hex0_d[1]
+set_location_assignment PIN_E11 -to seg_hex0_d[0]
+set_location_assignment PIN_A15 -to seg_hex1_d[6]
+set_location_assignment PIN_E14 -to seg_hex1_d[5]
+set_location_assignment PIN_B14 -to seg_hex1_d[4]
+set_location_assignment PIN_A14 -to seg_hex1_d[3]
+set_location_assignment PIN_C13 -to seg_hex1_d[2]
+set_location_assignment PIN_B13 -to seg_hex1_d[1]
+set_location_assignment PIN_A13 -to seg_hex1_d[0]
+set_location_assignment PIN_F14 -to seg_hex2_d[6]
+set_location_assignment PIN_B17 -to seg_hex2_d[5]
+set_location_assignment PIN_A17 -to seg_hex2_d[4]
+set_location_assignment PIN_E15 -to seg_hex2_d[3]
+set_location_assignment PIN_B16 -to seg_hex2_d[2]
+set_location_assignment PIN_A16 -to seg_hex2_d[1]
+set_location_assignment PIN_D15 -to seg_hex2_d[0]
+set_location_assignment PIN_G15 -to seg_hex3_d[6]
+set_location_assignment PIN_D19 -to seg_hex3_d[5]
+set_location_assignment PIN_C19 -to seg_hex3_d[4]
+set_location_assignment PIN_B19 -to seg_hex3_d[3]
+set_location_assignment PIN_A19 -to seg_hex3_d[2]
+set_location_assignment PIN_F15 -to seg_hex3_d[1]
+set_location_assignment PIN_B18 -to seg_hex3_d[0]
+set_location_assignment PIN_K18 -to vga_blu_d[3]
+set_location_assignment PIN_J22 -to vga_blu_d[2]
+set_location_assignment PIN_K21 -to vga_blu_d[1]
+set_location_assignment PIN_J21 -to vga_gre_d[3]
+set_location_assignment PIN_K17 -to vga_gre_d[2]
+set_location_assignment PIN_J17 -to vga_gre_d[1]
+set_location_assignment PIN_H22 -to vga_gre_d[0]
+set_location_assignment PIN_H21 -to vga_red_d[3]
+set_location_assignment PIN_H20 -to vga_red_d[2]
+set_location_assignment PIN_H17 -to vga_red_d[1]
+set_location_assignment PIN_H19 -to vga_red_d[0]
+set_location_assignment PIN_G21 -to clk
+set_location_assignment PIN_L22 -to vga_v_syn_d
+set_location_assignment PIN_L21 -to vga_h_syn_d
+set_location_assignment PIN_K22 -to vga_blu_d[0]
+set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
+set_global_assignment -name ENABLE_NCE_PIN OFF
+set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_location_assignment PIN_B1 -to led_mde_o
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH game_loader_tb -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_NAME ps2_dat_decoder_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ps2_dat_decoder_tb
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id ps2_dat_decoder_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ps2_dat_decoder_tb -section_id ps2_dat_decoder_tb
+set_global_assignment -name EDA_TEST_BENCH_NAME game_controller_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id game_controller_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME game_controller_tb -section_id game_controller_tb
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VHDL_FILE src/rtl/const_package.vhd
+set_global_assignment -name VHDL_FILE src/rtl/rom_mem.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/ram_game.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/system_top.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/ccu_top.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/game_controller.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/pxl_buffer.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/ps2_dat_decoder.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/ps2_controller.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/seg_controller.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/vga_controller.vhdl
+set_global_assignment -name QIP_FILE src/rtl/vga_clock_pll.qip
+set_global_assignment -name VHDL_FILE src/rtl/rst_synchronizer.vhdl
+set_global_assignment -name VHDL_TEST_BENCH_FILE src/tb/ps2_dat_decoder_tb.vhdl
+set_global_assignment -name VHDL_TEST_BENCH_FILE src/tb/game_controller_tb.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/game_loader.vhd
+set_global_assignment -name QIP_FILE rom.qip
+set_global_assignment -name MIF_FILE ROM.mif
+set_global_assignment -name VHDL_TEST_BENCH_FILE src/tb/game_loader_tb.vhd
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/ps2_dat_decoder_tb.vhdl -section_id ps2_dat_decoder_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_controller_tb.vhdl -section_id game_controller_tb
+set_global_assignment -name EDA_TEST_BENCH_NAME game_loader_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id game_loader_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME game_loader_tb -section_id game_loader_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_loader_tb.vhd -section_id game_loader_tb
+set_global_assignment -name VHDL_FILE src/rtl/solution_checker.vhd
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
