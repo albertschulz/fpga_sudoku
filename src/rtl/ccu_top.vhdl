@@ -29,6 +29,7 @@ entity ccu_top is
 		led_mde_o	: out std_logic;
 		seg_dat_o	: out std_logic_vector(27 downto 0);
 		vga_dat_o	: out std_logic_vector( 2 downto 0);
+		led_solved	: out std_logic;
 		
 		-- ROM-Ports
 		img_rom_dat_i	: in	std_logic_vector(31 downto 0);
@@ -103,7 +104,8 @@ begin
 			ram_dat_o	=> gc_ram_dat_o,
 			ram_we		=> gc_ram_we,
 			load_game	=> load_game,
-			game_loaded	=> game_loaded
+			game_loaded	=> game_loaded,
+			game_solved	=> led_solved
 		);
 		
 	-- Game Loader

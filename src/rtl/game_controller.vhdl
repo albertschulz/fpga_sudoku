@@ -23,7 +23,8 @@ entity game_controller is
 		ram_dat_o	: out	std_logic_vector(5 downto 0);
 		ram_we		: out	std_logic;
 		load_game	: out std_logic;
-		game_loaded	: in 	std_logic
+		game_loaded	: in 	std_logic;
+		game_solved	: out std_logic
 	);	
 end game_controller;
 
@@ -35,6 +36,9 @@ architecture rtl of game_controller is
 	
 	signal instr_reg	: CCU_CMD_TYPE := CMD_NOP;
 	signal instr_nxt	: CCU_CMD_TYPE;
+	
+	signal game_solved_reg : std_logic := '0';
+	signal game_solved_nxt : std_logic;
 	
 	-- current position
 	signal cnt_x		: unsigned(3 downto 0) := "0101";
@@ -56,23 +60,28 @@ architecture rtl of game_controller is
 	
 begin
 
+	game_solved <= game_solved_reg;
+
 	process(clk)
 	begin
 		if rising_edge(clk) then
 			if(rst = '1') then
 				state_cur 	<= IDLE;
 				instr_reg	<= CMD_NOP;
+				game_solved_reg	<= '0';
 			else
 				state_cur 	<= state_nxt;
 				instr_reg	<= instr_nxt;
+				game_solved_reg	<= game_solved_nxt;
 			end if;
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg)
 	begin
 		state_nxt	<= state_cur;
 		instr_nxt	<= instr_reg;
+		game_solved_nxt	<= game_solved_reg;
 		tsk_sta		<= "00";
 		load_game	<= '0';
 		check_game	<=	'0';
@@ -128,8 +137,12 @@ begin
 					
 					if correct = '1' then
 						-- Solution is correct
+						
+						game_solved_nxt <= '1';
+						
 					else
 						-- Solution is not correct
+						game_solved_nxt <= '0';
 					end if;
 					
 				end if;

@@ -55,7 +55,6 @@ begin
 	end process;
 	
 	process(state_cur, ram_dat_i, start, x , y)
-		alias ram_number_i : unsigned(3 downto 0) is unsigned(ram_dat_i(3 downto 0));
 	begin
 	
 		state_nxt 	<= state_cur;
@@ -64,7 +63,6 @@ begin
 		
 		done			<= '0';
 		correct		<= '0';
-		ram_adr_o	<= (others => '0');
 	
 		case state_cur is
 			
@@ -86,7 +84,7 @@ begin
 			
 				state_nxt <= READ_RAM;
 			
-				if ram_number_i = to_unsigned(0, ram_number_i'length) then
+				if ram_dat_i(3 downto 0) = "0000" then
 					-- Empty Field detected
 					state_nxt <= NOT_SOLVED;
 				else

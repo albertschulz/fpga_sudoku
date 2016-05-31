@@ -30,7 +30,8 @@ entity system_top is
 		seg_hex2_d  	: out std_logic_vector(6 downto 0);
 		seg_hex3_d  	: out std_logic_vector(6 downto 0);
 		
-		led_mde_o		: out std_logic
+		led_mde_o		: out std_logic;
+		led_solved		: out std_logic
 	);	
 end system_top;
 
@@ -136,7 +137,8 @@ begin
 			ram_adr_r1	=> sig_ram_adr_r1,
 			ram_adr_r2	=> sig_ram_adr_r2,
 			ram_adr_w	=> sig_ram_adr_w,
-			ram_we		=> sig_ram_we
+			ram_we		=> sig_ram_we,
+			led_solved	=> led_solved
 		);
 		
 	-- RAM-Game
