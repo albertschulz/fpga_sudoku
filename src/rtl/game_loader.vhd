@@ -51,11 +51,8 @@ begin
 	begin
 	
 		if rising_edge(clk) then
-		
-			-- Default Values
-			preset 	:= '1';
-			selected := '0';
-			
+			preset 			:= '1';
+			selected 		:= '0';
 			ram_write_en	<= '0';
 			done				<= '0';
 		
@@ -118,6 +115,9 @@ begin
 					
 				elsif state = LOADED then
 					done <= '1';
+					
+				else
+					state <= IDLE;
 				end if;
 			
 			end if;

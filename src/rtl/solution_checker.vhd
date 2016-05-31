@@ -34,10 +34,10 @@ architecture rtl of solution_checker is
 	signal state_nxt	: T_STATE;
 	
 	-- Counters
-	signal x	: unsigned(3 downto 0) := (others => '0');
-	signal y	: unsigned(3 downto 0) := (others => '0');
-	signal x_nxt : unsigned(3 downto 0);
-	signal y_nxt : unsigned(3 downto 0);
+	signal x			: unsigned(3 downto 0) := (others => '0');
+	signal y			: unsigned(3 downto 0) := (others => '0');
+	signal x_nxt	: unsigned(3 downto 0);
+	signal y_nxt 	: unsigned(3 downto 0);
 
 begin
 
@@ -56,16 +56,13 @@ begin
 	
 	process(state_cur, ram_dat_i, start, x , y)
 	begin
-	
 		state_nxt 	<= state_cur;
 		x_nxt			<= x;
 		y_nxt			<= y;
-		
 		done			<= '0';
 		correct		<= '0';
 	
 		case state_cur is
-			
 			when IDLE =>
 			
 				if start = '1' then
@@ -75,34 +72,28 @@ begin
 				end if;
 				
 			when READ_RAM =>
-			
 				ram_adr_o <= std_logic_vector(y) & std_logic_vector(x);
 				
 				state_nxt <= CHECK;
 				
 			when CHECK =>
-			
 				state_nxt <= READ_RAM;
 			
 				if ram_dat_i(3 downto 0) = "0000" then
 					-- Empty Field detected
 					state_nxt <= NOT_SOLVED;
 				else
-				
 					-- Increase Counters (row, column)
 					if x = to_unsigned(8, x'length) then
-					
 						if y = to_unsigned(8, y'length) then
 							state_nxt <= SOLVED;
 						else 
 							x_nxt <= to_unsigned(0, x_nxt'length);
-							y_nxt <= y+1;
+							y_nxt <= y + 1;
 						end if;
-						
 					else 
-						x_nxt <= x+1;
+						x_nxt <= x + 1;
 					end if;
-				
 				end if;
 			
 			when SOLVED =>
@@ -121,7 +112,5 @@ begin
 				null;
 			
 		end case;
-	
 	end process;
-
 end rtl;

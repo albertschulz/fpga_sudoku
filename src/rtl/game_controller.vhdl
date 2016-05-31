@@ -41,15 +41,15 @@ architecture rtl of game_controller is
 	signal game_solved_nxt : std_logic;
 	
 	-- current position
-	signal cnt_x		: unsigned(3 downto 0) := "0101";
-	signal cnt_y		: unsigned(3 downto 0) := "0101";
+	signal cnt_x			: unsigned(3 downto 0) := "0101";
+	signal cnt_y			: unsigned(3 downto 0) := "0101";
 	
-	signal tsk_cnt		: unsigned(1 downto 0) := (others => '0');
-	signal tsk_sta		: std_logic_vector(1 downto 0) := (others => '0');
-	signal tsk_stp		: std_logic := '0';
+	signal tsk_cnt			: unsigned(1 downto 0) := (others => '0');
+	signal tsk_sta			: std_logic_vector(1 downto 0) := (others => '0');
+	signal tsk_stp			: std_logic := '0';
 	
 	-- RAM Access
-	signal ram_adr_o	: std_logic_vector(7 downto 0);
+	signal ram_adr_o		: std_logic_vector(7 downto 0);
 	
 	-- For Solution Checker
 	signal check_game 	: std_logic;
@@ -60,18 +60,29 @@ architecture rtl of game_controller is
 	
 begin
 
-	game_solved <= game_solved_reg;
+	-- Solution Checker
+	checker : entity work.solution_checker
+	port map (
+		clk 			=> clk,
+		rst 			=> rst,
+		start 		=> check_game,
+		done 			=> checked,
+		correct 		=> correct,
+		ram_adr_o	=> sc_ram_adr_o,
+		ram_dat_i	=> ram_dat_i
+	);
+	
 
 	process(clk)
 	begin
 		if rising_edge(clk) then
 			if(rst = '1') then
-				state_cur 	<= IDLE;
-				instr_reg	<= CMD_NOP;
+				state_cur 			<= IDLE;
+				instr_reg			<= CMD_NOP;
 				game_solved_reg	<= '0';
 			else
-				state_cur 	<= state_nxt;
-				instr_reg	<= instr_nxt;
+				state_cur 			<= state_nxt;
+				instr_reg			<= instr_nxt;
 				game_solved_reg	<= game_solved_nxt;
 			end if;
 		end if;
@@ -79,12 +90,12 @@ begin
 	
 	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg)
 	begin
-		state_nxt	<= state_cur;
-		instr_nxt	<= instr_reg;
+		state_nxt			<= state_cur;
+		instr_nxt			<= instr_reg;
 		game_solved_nxt	<= game_solved_reg;
-		tsk_sta		<= "00";
-		load_game	<= '0';
-		check_game	<=	'0';
+		tsk_sta				<= "00";
+		load_game			<= '0';
+		check_game			<=	'0';
 		
 		case state_cur is
 			when IDLE =>
@@ -120,31 +131,24 @@ begin
 			when SETTING =>	-- todo: changes to setting mode when div key is pressed oO
 				tsk_sta <= "01";
 				if(tsk_stp = '1') then
-				
-					-- Check after Set
 					state_nxt <= CHECKING;
 				end if;
 				
 			when CHECKING =>
-				
 				check_game <= '1';
 				
 				if checked = '1' then
-				
 					state_nxt <= IDLE;
-				
-					-- TODO: Display (in)correct solution
 					
+					-- TODO: Display (in)correct solution
 					if correct = '1' then
 						-- Solution is correct
-						
 						game_solved_nxt <= '1';
 						
 					else
 						-- Solution is not correct
 						game_solved_nxt <= '0';
 					end if;
-					
 				end if;
 				
 			when MOVING =>
@@ -273,20 +277,9 @@ begin
 		end if;
 	end process;
 	
-	-- Solution Checker
-	checker : entity work.solution_checker
-	port map (
-		clk 			=> clk,
-		rst 			=> rst,
-		start 		=> check_game,
-		done 			=> checked,
-		correct 		=> correct,
-		ram_adr_o	=> sc_ram_adr_o,
-		ram_dat_i	=> ram_dat_i
-	);
+	game_solved <= game_solved_reg;
 		
 	-- MUX for address wire to RAM
-	ram_adr_r <= 	sc_ram_adr_o when check_game = '1' else
-						ram_adr_o;
+	ram_adr_r 	<= sc_ram_adr_o when check_game = '1' else ram_adr_o;
 	
 end rtl;

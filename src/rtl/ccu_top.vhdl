@@ -125,13 +125,8 @@ begin
 	-- MUX for RAM Write Port
 	-- 
 	-- Allow Game Loader to access RAM when loading game is in progress
-	ram_we 		<= gl_ram_we when load_game = '1' else
-						gc_ram_we;
-					
-	ram_adr_w	<= gl_ram_adr_w when load_game = '1' else
-						gc_ram_adr_w;
-						
-	ram_dat_o	<= gl_ram_dat_o when load_game = '1' else
-						gc_ram_dat_o;
+	ram_adr_w	<= gl_ram_adr_w 	when load_game = '1' else gc_ram_adr_w;
+	ram_dat_o	<= gl_ram_dat_o 	when load_game = '1' else gc_ram_dat_o;
+	ram_we 		<= gl_ram_we 		when load_game = '1' else gc_ram_we;
 		
 end rtl;

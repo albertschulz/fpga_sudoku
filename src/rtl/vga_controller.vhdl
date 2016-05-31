@@ -5,14 +5,13 @@
 -- Date:		25.04.2016
 -- Description:
 --		Controller for the VGA-Connector
+-- 	
+--		vga_dat_i - Data Format:
+-- 	011 		dark grey
+-- 	001 		black
+-- 	100, 110 light grey
+-- 	000, 010 white
 ------------------------------------------------
-
--- vga_dat_i - Data Format:
---
--- 011 		dark grey
--- 001 		black
--- 100, 110 light grey
--- 000, 010 white
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -20,7 +19,7 @@ use ieee.numeric_std.all;
 
 entity vga_controller is
 	generic(
-		-- resolution: 640 x 480 @ 60Hz 	-> pxl_clk = 25.175 MHz
+		-- resolution: 640 x 480 @ 60Hz 	-> pxl_clk = 25 MHz
 		H_PUL			: integer   := 96;  	-- hor. sync pulse
 		H_BP     	: integer   := 48;  	-- hor. back porch
 		H_PXL			: integer   := 640; 	-- hor. display width
@@ -131,7 +130,6 @@ begin
 				vga_blu_o 	<= (others => '0');
 			else
 				-- if display is enabled -> draw from incoming data
-				
 				if(disp_en = '1') then					-- display is enabled
 					if(vga_dat_i(0) = '1') then
 						if(vga_dat_i(1) = '1') then 	-- number is grey if fixed
