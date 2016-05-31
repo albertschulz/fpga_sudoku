@@ -133,9 +133,9 @@ begin
 				if(disp_en = '1') then					-- display is enabled
 					if(vga_dat_i(0) = '1') then
 						if(vga_dat_i(1) = '1') then 	-- number is grey if fixed
-							vga_red_o <= "0101";
-							vga_gre_o <= "0101";
-							vga_blu_o <= "0101";
+							vga_red_o <= "0100";
+							vga_gre_o <= "0100";
+							vga_blu_o <= "0100";
 						else									-- otherwise black
 							vga_red_o <= "0000";
 							vga_gre_o <= "0000";

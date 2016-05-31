@@ -51,12 +51,15 @@ architecture rtl of game_controller is
 	-- RAM Access
 	signal ram_adr_o		: std_logic_vector(7 downto 0);
 	
-	-- For Solution Checker
+	-- for Solution Checker
 	signal check_game 	: std_logic;
 	signal checked			: std_logic;
 	signal correct			: std_logic;
 	signal sc_ram_adr_o	: std_logic_vector(7 downto 0);
 	signal sc_ram_dat_i	: std_logic_vector(5 downto 0);
+	
+	-- game state
+	--signal 
 	
 begin
 

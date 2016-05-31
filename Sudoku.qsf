@@ -152,4 +152,5 @@ set_global_assignment -name EDA_TEST_BENCH_NAME solution_checker_tb -section_id 
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id solution_checker_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME solution_checker_tb -section_id solution_checker_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/solution_checker_tb.vhd -section_id solution_checker_tb
+set_global_assignment -name VHDL_FILE src/rtl/rom_lbl.vhdl
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

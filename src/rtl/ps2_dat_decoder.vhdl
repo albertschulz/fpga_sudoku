@@ -102,9 +102,8 @@ begin
 								when x"5A"	=>					-- 'Enter' -> E0,5A
 									seg_code <= x"01E6A78";
 									ins_code	<= CMD_ENT;
-									set_flg	<= not set_flg;
 									
-								when x"4A"	=>					-- '/'	  -> E0, 4A
+								when x"4A"	=>					-- '/'	-> E0, 4A
 									ins_code	<= CMD_DIV;
 
 								when x"F0"	=>					-- 'Release-Sig.' -> F0
@@ -120,22 +119,12 @@ begin
 						else
 							case ps2_dat_i is
 								when x"72"	=> 				-- '2' -> 72
-									if(mov_flg = '0') then
-										seg_code <= x"000001C";
-										ins_code	<= CMD_DWN;
-									else
-										seg_code <= x"0000000";
-										ins_code	<= CMD_NOP;
-									end if;
+									seg_code <= x"000001C";
+									ins_code	<= CMD_DWN;
 
 								when x"73"	=> 				-- '5' -> 73
-									if(mov_flg = '1') then
-										seg_code <= x"000001C";
-										ins_code	<= CMD_DWN;
-									else
-										seg_code <= x"0000000";
-										ins_code	<= CMD_NOP;
-									end if;
+									seg_code <= x"000001C";
+									ins_code	<= CMD_DWN;
 									
 								when x"6B"	=> 				-- '4' -> 6B
 									seg_code <= x"0000058";
@@ -156,13 +145,13 @@ begin
 								when x"5A"	=>					-- 'Enter' -> E0,5A
 									seg_code <= x"01E6A78";
 									ins_code	<= CMD_ENT;
-									set_flg	<= not set_flg;
 									
-								when x"4A"	=>					-- '/'	  -> E0, 4A
+								when x"4A"	=>					-- '/'	-> E0, 4A
 									ins_code	<= CMD_DIV;
 									
 								when x"77"	=>					-- 'Num' -> 77	
-									mov_flg	<= not mov_flg;
+									seg_code <= x"01B7CF8";
+									set_flg	<= '1';
 									
 								when x"F0"	=>					-- 'Release-Sig.' -> F0
 									rel_flg 	<= '1';				

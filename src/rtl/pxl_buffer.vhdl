@@ -239,6 +239,8 @@ begin
 			else
 				if(((vga_pos_x > PXL_OFF_FRM - 1) and (vga_pos_x < PXL_OFF_FRM + PXL_FLD_SZE)) and ((vga_pos_y > PXL_OFF_FRM - 1) and (vga_pos_y < PXL_OFF_FRM + PXL_FLD_SZE))) then	-- sudoku field
 					vga_dat_o <= buf_lne_cur(vga_pos_x - PXL_OFF_FRM);
+				--elsif() then -- righthand menu
+					
 				else
 					vga_dat_o <= "000";
 				end if;
