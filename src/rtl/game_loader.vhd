@@ -114,16 +114,11 @@ begin
 					end if;
 					
 				elsif state = LOADED then
+					state <= IDLE;
 					done <= '1';
 					
-				else
-					state <= IDLE;
 				end if;
-			
 			end if;
-			
 		end if;
-	
 	end process;
-
 end rtl;

@@ -32,5 +32,6 @@ package const_package is
 	constant CMD_ENT	: CCU_CMD_TYPE := "01110";
 	constant CMD_NOP	: CCU_CMD_TYPE := "01111";
 	constant CMD_DIV	: CCU_CMD_TYPE := "10000";
+	constant CMD_MNU	: CCU_CMD_TYPE := "10001";
 	
 end const_package;

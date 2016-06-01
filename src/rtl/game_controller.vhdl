@@ -14,52 +14,59 @@ use work.const_package.all;
 
 entity game_controller is
 	port(
-		clk	      : in  std_logic;
-		rst			: in  std_logic;
-		instr_i		: in  CCU_CMD_TYPE;
-		ram_dat_i	: in  std_logic_vector(5 downto 0);
-		ram_adr_r	: out	std_logic_vector(7 downto 0);
-		ram_adr_w	: out	std_logic_vector(7 downto 0);
-		ram_dat_o	: out	std_logic_vector(5 downto 0);
-		ram_we		: out	std_logic;
-		load_game	: out std_logic;
-		game_loaded	: in 	std_logic;
-		game_solved	: out std_logic
+		clk	      	: in  std_logic;
+		rst				: in  std_logic;
+		
+		instr_i			: in  CCU_CMD_TYPE;
+		
+		ram_dat_i		: in  std_logic_vector(5 downto 0);
+		ram_adr_r		: out	std_logic_vector(7 downto 0);
+		ram_adr_w		: out	std_logic_vector(7 downto 0);
+		ram_dat_o		: out	std_logic_vector(5 downto 0);
+		ram_we			: out	std_logic;
+		
+		game_loaded		: in 	std_logic;
+		game_solved		: out std_logic;
+		game_state		: out std_logic;
+		game_menu		: out	std_logic;
+		game_diff		: out std_logic_vector(1 downto 0);
+		game_btn_act	: out std_logic_vector(3 downto 0);
+		load_game		: buffer std_logic
 	);	
 end game_controller;
 
 architecture rtl of game_controller is
 
-	type ccu_state is (IDLE, LOADING, MOVING, SETTING, CHECKING);
-	signal state_cur	: ccu_state := IDLE;
-	signal state_nxt	: ccu_state;
+	type ccu_state is (IDLE, LOADING, MOVING, SETTING, CHECKING, BUSY);
+	signal state_cur			: ccu_state := IDLE;
+	signal state_nxt			: ccu_state;
 	
-	signal instr_reg	: CCU_CMD_TYPE := CMD_NOP;
-	signal instr_nxt	: CCU_CMD_TYPE;
+	signal instr_reg			: CCU_CMD_TYPE := CMD_NOP;
+	signal instr_nxt			: CCU_CMD_TYPE;
 	
-	signal game_solved_reg : std_logic := '0';
-	signal game_solved_nxt : std_logic;
+	signal game_solved_reg 	: std_logic := '0';
+	signal game_solved_nxt 	: std_logic;
+	signal game_state_reg	: std_logic := '1';								-- '0' -> start, 		'1' -> playing
+	signal game_menu_reg		: std_logic := '0';								-- '0' -> game field,'1' -> menu
+	signal game_diff_reg		: std_logic_vector(1 downto 0) := "01";	-- "01" -> easy, "10" -> medium, "11" -> hard
+	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0000";
 	
 	-- current position
-	signal cnt_x			: unsigned(3 downto 0) := "0101";
-	signal cnt_y			: unsigned(3 downto 0) := "0101";
-	
-	signal tsk_cnt			: unsigned(1 downto 0) := (others => '0');
-	signal tsk_sta			: std_logic_vector(1 downto 0) := (others => '0');
-	signal tsk_stp			: std_logic := '0';
+	signal cnt_x				: unsigned(3 downto 0) := "0101";
+	signal cnt_y				: unsigned(3 downto 0) := "0101";
+	signal tsk_cnt				: unsigned(1 downto 0) := (others => '0');
+	signal tsk_sta				: std_logic_vector(1 downto 0) := (others => '0');
+	signal tsk_stp				: std_logic := '0';
 	
 	-- RAM Access
-	signal ram_adr_o		: std_logic_vector(7 downto 0);
+	signal ram_adr_o			: std_logic_vector(7 downto 0);
 	
 	-- for Solution Checker
-	signal check_game 	: std_logic;
-	signal checked			: std_logic;
-	signal correct			: std_logic;
-	signal sc_ram_adr_o	: std_logic_vector(7 downto 0);
-	signal sc_ram_dat_i	: std_logic_vector(5 downto 0);
-	
-	-- game state
-	--signal 
+	signal check_game 		: std_logic;
+	signal checked				: std_logic;
+	signal correct				: std_logic;
+	signal sc_ram_adr_o		: std_logic_vector(7 downto 0);
+	signal sc_ram_dat_i		: std_logic_vector(5 downto 0);
 	
 begin
 
@@ -91,7 +98,7 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
@@ -99,6 +106,7 @@ begin
 		tsk_sta				<= "00";
 		load_game			<= '0';
 		check_game			<=	'0';
+		game_menu_reg 		<= '0';
 		
 		case state_cur is
 			when IDLE =>
@@ -120,11 +128,38 @@ begin
 					when CMD_DWN	=> state_nxt <= MOVING;
 					when CMD_LFT	=> state_nxt <= MOVING;
 					when CMD_DIV 	=> state_nxt <= LOADING;
+					when CMD_MNU 	=> state_nxt <= BUSY;							
 					when others		=>	state_nxt <= IDLE;
 				end case;
-				
-			when LOADING =>
 			
+			when BUSY =>
+				game_menu_reg <= '1';
+				if(game_state_reg = '0') then
+					game_btn_act_reg <= "0001";
+				else
+					game_btn_act_reg <= "0010";
+				end if;
+				
+				if(instr_i = CMD_UP or instr_i = CMD_8) then
+					
+				elsif(instr_i = CMD_DWN or instr_i = CMD_2 or instr_i = CMD_5) then
+					
+				elsif(instr_i = CMD_RGT or instr_i = CMD_6) then
+					
+				elsif(instr_i = CMD_LFT or instr_i = CMD_4) then
+					
+				elsif(instr_i = CMD_ENT) then
+				
+				elsif(instr_i = CMD_MNU) then
+					if(game_state_reg = '1') then
+						state_nxt		<= IDLE;
+					end if;
+				else
+					
+				end if;
+				
+			
+			when LOADING =>
 				load_game	<= '1';
 			
 				if game_loaded = '1' then
@@ -277,12 +312,21 @@ begin
 				ram_dat_o <= (others => '0');
 				ram_we 	 <= '0';
 			end if;
+			
+			if(load_game = '1') then
+				cnt_x	<= "0101";
+				cnt_y	<= "0101";
+			end if;
 		end if;
 	end process;
 	
-	game_solved <= game_solved_reg;
+	game_state 		<= game_state_reg;
+	game_menu 		<= game_menu_reg;
+	game_diff		<= game_diff_reg;
+	game_btn_act	<= game_btn_act_reg;
+	game_solved  	<= game_solved_reg;
 		
 	-- MUX for address wire to RAM
-	ram_adr_r 	<= sc_ram_adr_o when check_game = '1' else ram_adr_o;
+	ram_adr_r 		<= sc_ram_adr_o when check_game = '1' else ram_adr_o;
 	
 end rtl;

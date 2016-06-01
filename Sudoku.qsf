@@ -120,8 +120,20 @@ set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME game_controller_tb -secti
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_NAME game_loader_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id game_loader_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME game_loader_tb -section_id game_loader_tb
+set_location_assignment PIN_B2 -to led_solved
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/ps2_dat_decoder_tb.vhdl -section_id ps2_dat_decoder_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_controller_tb.vhdl -section_id game_controller_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_loader_tb.vhd -section_id game_loader_tb
+set_global_assignment -name EDA_TEST_BENCH_NAME solution_checker_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id solution_checker_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME solution_checker_tb -section_id solution_checker_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/solution_checker_tb.vhd -section_id solution_checker_tb
 set_global_assignment -name VHDL_FILE src/rtl/const_package.vhd
 set_global_assignment -name VHDL_FILE src/rtl/rom_mem.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/rom_lbl.vhdl
 set_global_assignment -name VHDL_FILE src/rtl/ram_game.vhdl
 set_global_assignment -name VHDL_FILE src/rtl/system_top.vhdl
 set_global_assignment -name VHDL_FILE src/rtl/ccu_top.vhdl
@@ -139,18 +151,6 @@ set_global_assignment -name VHDL_FILE src/rtl/game_loader.vhd
 set_global_assignment -name QIP_FILE rom.qip
 set_global_assignment -name MIF_FILE ROM.mif
 set_global_assignment -name VHDL_TEST_BENCH_FILE src/tb/game_loader_tb.vhd
-set_global_assignment -name EDA_TEST_BENCH_NAME game_loader_tb -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id game_loader_tb
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME game_loader_tb -section_id game_loader_tb
 set_global_assignment -name VHDL_FILE src/rtl/solution_checker.vhd
-set_location_assignment PIN_B2 -to led_solved
 set_global_assignment -name VHDL_FILE src/tb/solution_checker_tb.vhd
-set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/ps2_dat_decoder_tb.vhdl -section_id ps2_dat_decoder_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_controller_tb.vhdl -section_id game_controller_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/game_loader_tb.vhd -section_id game_loader_tb
-set_global_assignment -name EDA_TEST_BENCH_NAME solution_checker_tb -section_id eda_simulation
-set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id solution_checker_tb
-set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME solution_checker_tb -section_id solution_checker_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE src/tb/solution_checker_tb.vhd -section_id solution_checker_tb
-set_global_assignment -name VHDL_FILE src/rtl/rom_lbl.vhdl
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -98,14 +98,21 @@ begin
 									seg_code <= x"017BCB8";
 									ins_code	<= CMD_DEL;
 									set_flg	<= '0';
-
-								when x"5A"	=>					-- 'Enter' -> E0,5A
-									seg_code <= x"01E6A78";
-									ins_code	<= CMD_ENT;
+									
+								when x"77"	=>					-- 'Num' -> 77	
+									seg_code <= x"01B7CF8";
 									
 								when x"4A"	=>					-- '/'	-> E0, 4A
 									ins_code	<= CMD_DIV;
-
+									
+								when x"7C"	=>					-- '*'	-> 7C
+									seg_code <= x"A912A1C";
+									ins_code	<= CMD_MNU;
+									
+								when x"5A"	=>					-- 'Enter' -> E0,5A
+									seg_code <= x"01E6A78";
+									ins_code	<= CMD_ENT;
+								
 								when x"F0"	=>					-- 'Release-Sig.' -> F0
 									rel_flg 	<= '1';				
 
@@ -141,17 +148,21 @@ begin
 								when x"71"	=>					-- 'Del' -> 71
 									seg_code <= x"017BCB8";
 									ins_code	<= CMD_DEL;
-
-								when x"5A"	=>					-- 'Enter' -> E0,5A
-									seg_code <= x"01E6A78";
-									ins_code	<= CMD_ENT;
-									
-								when x"4A"	=>					-- '/'	-> E0, 4A
-									ins_code	<= CMD_DIV;
 									
 								when x"77"	=>					-- 'Num' -> 77	
 									seg_code <= x"01B7CF8";
 									set_flg	<= '1';
+								
+								when x"4A"	=>					-- '/'	-> E0, 4A
+									ins_code	<= CMD_DIV;
+								
+								when x"7C"	=>					-- '*'	-> 7C
+									seg_code <= x"A912A1C";
+									ins_code	<= CMD_MNU;
+									
+								when x"5A"	=>					-- 'Enter' -> E0,5A
+									seg_code <= x"01E6A78";
+									ins_code	<= CMD_ENT;
 									
 								when x"F0"	=>					-- 'Release-Sig.' -> F0
 									rel_flg 	<= '1';				
