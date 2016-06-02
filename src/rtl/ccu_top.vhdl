@@ -131,6 +131,7 @@ begin
 			clk 				=> clk,
 			rst 				=> rst,
 			load				=> load_game,
+			game_diff		=> sig_game_diff,
 			rom_data_in 	=> game_rom_dat_i(3 downto 0),
 			rom_addr_out	=> game_rom_adr_o,
 			done			 	=> game_loaded,

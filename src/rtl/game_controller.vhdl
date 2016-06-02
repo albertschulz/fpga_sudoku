@@ -38,7 +38,7 @@ end game_controller;
 architecture rtl of game_controller is
 
 	type ccu_state is (IDLE, LOADING, MOVING, SETTING, CHECKING, BUSY);
-	signal state_cur			: ccu_state := IDLE;
+	signal state_cur			: ccu_state := BUSY;
 	signal state_nxt			: ccu_state;
 	
 	signal instr_reg			: CCU_CMD_TYPE := CMD_NOP;
