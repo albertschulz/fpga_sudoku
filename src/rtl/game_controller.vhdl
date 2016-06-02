@@ -47,9 +47,13 @@ architecture rtl of game_controller is
 	signal game_solved_reg 	: std_logic := '0';
 	signal game_solved_nxt 	: std_logic;
 	signal game_state_reg	: std_logic := '1';								-- '0' -> start, 		'1' -> playing
+	signal game_state_nxt	: std_logic;
 	signal game_menu_reg		: std_logic := '0';								-- '0' -> game field,'1' -> menu
+	--signal game_menu_nxt		: std_logic;
 	signal game_diff_reg		: std_logic_vector(1 downto 0) := "01";	-- "01" -> easy, "10" -> medium, "11" -> hard
+	signal game_diff_nxt		: std_logic_vector(1 downto 0);
 	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0000";
+	signal game_btn_act_nxt	: std_logic_vector(3 downto 0);
 	
 	-- current position
 	signal cnt_x				: unsigned(3 downto 0) := "0101";
@@ -90,23 +94,32 @@ begin
 				state_cur 			<= IDLE;
 				instr_reg			<= CMD_NOP;
 				game_solved_reg	<= '0';
+				game_state_reg		<= '0';
+				game_diff_reg		<= "01";
+				game_btn_act_reg	<= "0000";
 			else
 				state_cur 			<= state_nxt;
 				instr_reg			<= instr_nxt;
 				game_solved_reg	<= game_solved_nxt;
+				game_state_reg		<= game_state_nxt;
+				game_diff_reg		<= game_diff_nxt;
+				game_btn_act_reg	<= game_btn_act_nxt;
 			end if;
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
+		game_state_nxt		<= game_state_reg;
+		game_diff_nxt		<= game_diff_reg;
+		game_btn_act_nxt	<= game_btn_act_reg;
 		game_solved_nxt	<= game_solved_reg;
 		tsk_sta				<= "00";
 		load_game			<= '0';
 		check_game			<=	'0';
-		game_menu_reg 		<= '0';
+		game_menu_reg		<=	'0';
 		
 		case state_cur is
 			when IDLE =>
@@ -128,31 +141,72 @@ begin
 					when CMD_DWN	=> state_nxt <= MOVING;
 					when CMD_LFT	=> state_nxt <= MOVING;
 					when CMD_DIV 	=> state_nxt <= LOADING;
-					when CMD_MNU 	=> state_nxt <= BUSY;							
+					when CMD_MNU 	=>
+						state_nxt <= BUSY;
+						
+						if(game_state_reg = '0') then
+							game_btn_act_nxt <= "0001";
+						else
+							game_btn_act_nxt <= "0010";
+						end if;
 					when others		=>	state_nxt <= IDLE;
 				end case;
 			
 			when BUSY =>
 				game_menu_reg <= '1';
-				if(game_state_reg = '0') then
-					game_btn_act_reg <= "0001";
-				else
-					game_btn_act_reg <= "0010";
-				end if;
 				
 				if(instr_i = CMD_UP or instr_i = CMD_8) then
-					
+					if(game_state_reg = '0') then
+						if(game_btn_act_reg = "0101" or game_btn_act_reg = "0110" or game_btn_act_reg = "0111") then
+							game_btn_act_nxt <= "0001";
+						end if;
+					else
+						if(game_btn_act_reg = "0011") then
+							game_btn_act_nxt <= "0010";
+						end if;
+					end if;
 				elsif(instr_i = CMD_DWN or instr_i = CMD_2 or instr_i = CMD_5) then
-					
+					if(game_state_reg = '0') then
+						if(game_btn_act_reg = "0001") then
+							if(game_diff_reg = "01") then
+								game_btn_act_nxt <= "0101";
+							elsif(game_diff_reg = "10") then
+								game_btn_act_nxt <= "0110";
+							else
+								game_btn_act_nxt <= "0111";
+							end if;
+						end if;
+					else
+						if(game_btn_act_reg = "0010") then
+							game_btn_act_nxt <= "0011";
+						end if;
+					end if;
 				elsif(instr_i = CMD_RGT or instr_i = CMD_6) then
-					
+					if(game_state_reg = '0') then
+						if(game_btn_act_reg = "0101") then
+							game_diff_nxt		<= "10";
+							game_btn_act_nxt 	<= "0110";
+						elsif(game_btn_act_reg = "0110") then
+							game_diff_nxt		<= "11";
+							game_btn_act_nxt	<= "0111";
+						end if;
+					end if;
 				elsif(instr_i = CMD_LFT or instr_i = CMD_4) then
-					
+					if(game_state_reg = '0') then
+						if(game_btn_act_reg = "0110") then
+							game_diff_nxt		<= "01";
+							game_btn_act_nxt 	<= "0101";
+						elsif(game_btn_act_reg = "0111") then
+							game_diff_nxt		<= "10";
+							game_btn_act_nxt	<= "0110";
+						end if;
+					end if;
 				elsif(instr_i = CMD_ENT) then
 				
 				elsif(instr_i = CMD_MNU) then
 					if(game_state_reg = '1') then
-						state_nxt		<= IDLE;
+						state_nxt			<= IDLE;
+						game_btn_act_nxt	<= "0000";
 					end if;
 				else
 					
