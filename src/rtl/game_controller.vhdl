@@ -46,13 +46,13 @@ architecture rtl of game_controller is
 	
 	signal game_solved_reg 	: std_logic := '0';
 	signal game_solved_nxt 	: std_logic;
-	signal game_state_reg	: std_logic := '1';								-- '0' -> start, 		'1' -> playing
+	signal game_state_reg	: std_logic := '0';								-- '0' -> start, 		'1' -> playing
 	signal game_state_nxt	: std_logic;
-	signal game_menu_reg		: std_logic := '0';								-- '0' -> game field,'1' -> menu
+	signal game_menu_reg		: std_logic := '1';								-- '0' -> game field,'1' -> menu
 	--signal game_menu_nxt		: std_logic;
 	signal game_diff_reg		: std_logic_vector(1 downto 0) := "01";	-- "01" -> easy, "10" -> medium, "11" -> hard
 	signal game_diff_nxt		: std_logic_vector(1 downto 0);
-	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0000";
+	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0001";
 	signal game_btn_act_nxt	: std_logic_vector(3 downto 0);
 	
 	-- current position
@@ -140,10 +140,7 @@ begin
 					when CMD_RGT	=> state_nxt <= MOVING;
 					when CMD_DWN	=> state_nxt <= MOVING;
 					when CMD_LFT	=> state_nxt <= MOVING;
-					when CMD_DIV 	=> state_nxt <= LOADING;
-					when CMD_MNU 	=>
-						state_nxt <= BUSY;
-						
+					when CMD_MNU 	=> state_nxt <= BUSY;
 						if(game_state_reg = '0') then
 							game_btn_act_nxt <= "0001";
 						else
@@ -202,7 +199,27 @@ begin
 						end if;
 					end if;
 				elsif(instr_i = CMD_ENT) then
-				
+					if(game_btn_act_reg = "0001") then
+						state_nxt 			<= LOADING;
+						game_state_nxt		<= '1';
+						game_btn_act_nxt	<= "0000";
+						
+						if(game_diff_reg = "01") then		-- easy
+							
+						elsif(game_diff_reg = "10") then -- medium
+							
+						elsif(game_diff_reg = "11") then -- hard
+							
+						end if;
+					elsif(game_btn_act_reg = "0010") then
+						state_nxt 			<= LOADING;
+						game_state_nxt		<= '1';
+						game_btn_act_nxt	<= "0000";
+					elsif(game_btn_act_reg = "0011") then
+						state_nxt 			<= BUSY;
+						game_state_nxt		<= '0';
+						game_btn_act_nxt	<= "0001";
+					end if;
 				elsif(instr_i = CMD_MNU) then
 					if(game_state_reg = '1') then
 						state_nxt			<= IDLE;
@@ -212,7 +229,6 @@ begin
 					
 				end if;
 				
-			
 			when LOADING =>
 				load_game	<= '1';
 			
