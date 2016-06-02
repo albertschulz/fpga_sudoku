@@ -39,7 +39,7 @@ architecture rtl of game_controller is
 
 	type ccu_state is (IDLE, LOADING, MOVING, SETTING, CHECKING, BUSY);
 	signal state_cur			: ccu_state := IDLE;
-	signal state_nxt			: ccu_state;
+	signal state_nxt			: ccu_state	:= BUSY;
 	
 	signal instr_reg			: CCU_CMD_TYPE := CMD_NOP;
 	signal instr_nxt			: CCU_CMD_TYPE;
@@ -91,12 +91,12 @@ begin
 	begin
 		if rising_edge(clk) then
 			if(rst = '1') then
-				state_cur 			<= IDLE;
+				state_cur 			<= BUSY;
 				instr_reg			<= CMD_NOP;
 				game_solved_reg	<= '0';
 				game_state_reg		<= '0';
 				game_diff_reg		<= "01";
-				game_btn_act_reg	<= "0000";
+				game_btn_act_reg	<= "0001";
 			else
 				state_cur 			<= state_nxt;
 				instr_reg			<= instr_nxt;
@@ -108,7 +108,7 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
@@ -203,14 +203,6 @@ begin
 						state_nxt 			<= LOADING;
 						game_state_nxt		<= '1';
 						game_btn_act_nxt	<= "0000";
-						
-						if(game_diff_reg = "01") then		-- easy
-							
-						elsif(game_diff_reg = "10") then -- medium
-							
-						elsif(game_diff_reg = "11") then -- hard
-							
-						end if;
 					elsif(game_btn_act_reg = "0010") then
 						state_nxt 			<= LOADING;
 						game_state_nxt		<= '1';

@@ -341,7 +341,7 @@ begin
 	end process;
 	
 	-- 
-	process(vga_pos_x, vga_pos_y, buf_lne_cur)
+	process(vga_pos_x, vga_pos_y, buf_lne_cur, buf_lbl_cur)
 	begin
 		-- calc y-position of next display line
 		if(vga_pos_y < PXL_DSP_V - 1) then
