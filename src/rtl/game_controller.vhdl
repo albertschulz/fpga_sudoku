@@ -108,7 +108,7 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
