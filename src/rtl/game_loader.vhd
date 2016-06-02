@@ -18,6 +18,7 @@ entity game_loader is
 		clk				: in  std_logic;
 		rst				: in  std_logic;
 		load				: in 	std_logic;
+		load_old			: in 	std_logic;
 		game_diff		: in  std_logic_vector(1 downto 0);
 
 		-- Output ports
@@ -42,7 +43,9 @@ architecture rtl of game_loader is
 	signal x					: unsigned(3 downto 0) := (others => '0');
 	signal y					: unsigned(3 downto 0) := (others => '0');
 	signal rnd_num			: unsigned(1 downto 0) := (others => '0');
+	signal rnd_old			: unsigned(1 downto 0);
 	signal game_diff_reg	: unsigned(1 downto 0);
+	signal load_old_reg	: std_logic := '0';
 
 begin
 	game_diff_reg	<= unsigned(game_diff);
@@ -63,6 +66,7 @@ begin
 	process (clk)
 		variable preset 	: std_logic;
 		variable selected : std_logic;
+		variable tmp_rnd	: unsigned(1 downto 0);
 	begin
 		if rising_edge(clk) then
 			preset 			:= '1';
@@ -71,23 +75,36 @@ begin
 			done				<= '0';
 		
 			if rst = '1' then
-				cnt 			<= to_unsigned(0, cnt'length);
-				x 				<= to_unsigned(0, x'length);
-				y				<= to_unsigned(0, y'length);
-				state 		<= IDLE;
+				cnt 				<= to_unsigned(0, cnt'length);
+				x 					<= to_unsigned(0, x'length);
+				y					<= to_unsigned(0, y'length);
+				state 			<= IDLE;
+				load_old_reg	<= '0';
 			else
+				if(load_old_reg = '0' and load_old = '1') then
+					load_old_reg <= '1';
+				end if;
+			
 				if state = IDLE then
 					if load = '1' then
 						state		<= READ_ROM;
 						cnt 		<= to_unsigned(0, cnt'length);
 						x			<= to_unsigned(0, x'length);
 						y			<= to_unsigned(0, y'length);
+						
+						if(load_old_reg = '1') then
+							tmp_rnd			:= rnd_old;
+							load_old_reg	<= '0';
+						else
+							tmp_rnd	:= rnd_num;
+							rnd_old	<= rnd_num;
+						end if;
 					end if;
 					
 				elsif state = READ_ROM then
 					state		<= WAIT_FOR_ROM;
 					
-					rom_addr_out 	<= std_logic_vector(game_diff_reg - 1) & std_logic_vector(rnd_num) & std_logic_vector(cnt);
+					rom_addr_out 	<= std_logic_vector(game_diff_reg - 1) & std_logic_vector(tmp_rnd) & std_logic_vector(cnt);
 					
 				elsif state = WAIT_FOR_ROM then
 					state		<= WRITE_RAM;

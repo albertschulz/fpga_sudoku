@@ -31,7 +31,8 @@ entity game_controller is
 		game_menu		: out	std_logic;
 		game_diff		: out std_logic_vector(1 downto 0);
 		game_btn_act	: out std_logic_vector(3 downto 0);
-		load_game		: buffer std_logic
+		load_game		: buffer std_logic;
+		load_old_game	: out std_logic
 	);	
 end game_controller;
 
@@ -118,6 +119,7 @@ begin
 		game_solved_nxt	<= game_solved_reg;
 		tsk_sta				<= "00";
 		load_game			<= '0';
+		load_old_game		<= '0';
 		check_game			<=	'0';
 		game_menu_reg		<=	'0';
 		
@@ -205,6 +207,7 @@ begin
 						game_btn_act_nxt	<= "0000";
 					elsif(game_btn_act_reg = "0010") then
 						state_nxt 			<= LOADING;
+						load_old_game		<= '1';
 						game_state_nxt		<= '1';
 						game_btn_act_nxt	<= "0000";
 					elsif(game_btn_act_reg = "0011") then
@@ -216,9 +219,7 @@ begin
 					if(game_state_reg = '1') then
 						state_nxt			<= IDLE;
 						game_btn_act_nxt	<= "0000";
-					end if;
-				else
-					
+					end if;					
 				end if;
 				
 			when LOADING =>
@@ -228,7 +229,7 @@ begin
 					state_nxt <= IDLE;
 				end if;
 				
-			when SETTING =>	-- todo: changes to setting mode when div key is pressed oO
+			when SETTING =>
 				tsk_sta <= "01";
 				if(tsk_stp = '1') then
 					state_nxt <= CHECKING;

@@ -65,6 +65,7 @@ architecture rtl of ccu_top is
 	
 	-- from: Game Controller
 	signal load_game			: std_logic;
+	signal load_old_game		: std_logic;
 	signal gc_ram_adr_w		: std_logic_vector(7 downto 0);
 	signal gc_ram_dat_o		: std_logic_vector(5 downto 0);
 	signal gc_ram_we			: std_logic;
@@ -117,6 +118,7 @@ begin
 			ram_dat_o		=> gc_ram_dat_o,
 			ram_we			=> gc_ram_we,
 			load_game		=> load_game,
+			load_old_game	=> load_old_game,
 			game_loaded		=> game_loaded,
 			game_solved		=> led_solved,
 			game_state		=> sig_game_state,
@@ -131,6 +133,7 @@ begin
 			clk 				=> clk,
 			rst 				=> rst,
 			load				=> load_game,
+			load_old			=> load_old_game,
 			game_diff		=> sig_game_diff,
 			rom_data_in 	=> game_rom_dat_i(3 downto 0),
 			rom_addr_out	=> game_rom_adr_o,
