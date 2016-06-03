@@ -73,6 +73,11 @@ architecture rtl of ccu_top is
 	signal sig_game_menu		: std_logic;
 	signal sig_game_diff		: std_logic_vector(1 downto 0);
 	signal sig_game_btn_act	: std_logic_vector(3 downto 0);
+	signal sig_tmr_rst		: std_logic;
+	signal sig_tmr_en			: std_logic;
+	
+	-- from: CLK-Timer
+	signal sig_tme_out		: std_logic_vector(12 downto 0);
   
 begin
 	-- PS2-Dat-Decoder
@@ -91,6 +96,7 @@ begin
 	pxl_buf : entity work.pxl_buffer
 		port map(
 			clk 				=> clk,
+			tme_i				=> sig_tme_out,
 			game_state		=> sig_game_state,
 			game_menu		=> sig_game_menu,
 			game_diff		=> sig_game_diff,
@@ -124,7 +130,9 @@ begin
 			game_state		=> sig_game_state,
 			game_menu		=> sig_game_menu,
 			game_diff		=> sig_game_diff,
-			game_btn_act	=> sig_game_btn_act
+			game_btn_act	=> sig_game_btn_act,
+			tmr_rst			=> sig_tmr_rst,
+			tmr_en			=> sig_tmr_en
 		);
 		
 	-- Game Loader
@@ -141,6 +149,16 @@ begin
 			ram_addr_out 	=> gl_ram_adr_w,
 			ram_data_out 	=> gl_ram_dat_o,
 			ram_write_en 	=> gl_ram_we
+		);
+		
+	--CLK-Timer
+	tmr_clk : entity work.tmr_clk
+		port map (
+			clk 				=> clk,
+			rst 				=> rst,
+			tmr_rst			=> sig_tmr_rst,
+			tmr_en			=> sig_tmr_en,
+			tme_out 			=> sig_tme_out
 		);
 		
 	-- MUX for RAM Write Port

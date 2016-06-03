@@ -15,6 +15,8 @@ entity pxl_buffer is
 	port(
 		clk				: in	std_logic;
 		
+		tme_i				: in	std_logic_vector(12 downto 0);
+		
 		game_state		: in	std_logic;
 		game_menu		: in	std_logic;
 		game_diff		: in  std_logic_vector(1 downto 0);
