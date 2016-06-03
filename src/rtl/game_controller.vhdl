@@ -32,7 +32,10 @@ entity game_controller is
 		game_diff		: out std_logic_vector(1 downto 0);
 		game_btn_act	: out std_logic_vector(3 downto 0);
 		load_game		: buffer std_logic;
-		load_old_game	: out std_logic
+		load_old_game	: out std_logic;
+		
+		tmr_rst			: out	std_logic;
+		tmr_en			: out	std_logic
 	);	
 end game_controller;
 
@@ -73,6 +76,12 @@ architecture rtl of game_controller is
 	signal sc_ram_adr_o		: std_logic_vector(7 downto 0);
 	signal sc_ram_dat_i		: std_logic_vector(5 downto 0);
 	
+	-- CLK-Timer
+	signal tmr_rst_reg		: std_logic := '0';
+	signal tmr_rst_nxt		: std_logic;
+	signal tmr_en_reg			: std_logic := '0';
+	signal tmr_en_nxt			: std_logic;
+	
 begin
 
 	-- Solution Checker
@@ -98,6 +107,8 @@ begin
 				game_state_reg		<= '0';
 				game_diff_reg		<= "01";
 				game_btn_act_reg	<= "0001";
+				tmr_rst_reg			<= '0';
+				tmr_en_reg			<= '0';
 			else
 				state_cur 			<= state_nxt;
 				instr_reg			<= instr_nxt;
@@ -105,14 +116,18 @@ begin
 				game_state_reg		<= game_state_nxt;
 				game_diff_reg		<= game_diff_nxt;
 				game_btn_act_reg	<= game_btn_act_nxt;
+				tmr_rst_reg			<= tmr_rst_nxt;
+				tmr_en_reg			<= tmr_en_nxt;
 			end if;
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg, tmr_rst_reg, tmr_en_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
+		tmr_rst_nxt			<= tmr_rst_reg;
+		tmr_en_nxt			<= tmr_en_reg;
 		game_state_nxt		<= game_state_reg;
 		game_diff_nxt		<= game_diff_reg;
 		game_btn_act_nxt	<= game_btn_act_reg;
@@ -208,10 +223,13 @@ begin
 					elsif(game_btn_act_reg = "0010") then
 						state_nxt 			<= LOADING;
 						load_old_game		<= '1';
+						tmr_rst_nxt			<= '1';
 						game_state_nxt		<= '1';
 						game_btn_act_nxt	<= "0000";
 					elsif(game_btn_act_reg = "0011") then
 						state_nxt 			<= BUSY;
+						tmr_rst_nxt			<= '1';
+						tmr_en_nxt			<= '0';
 						game_state_nxt		<= '0';
 						game_btn_act_nxt	<= "0001";
 					end if;
@@ -227,6 +245,8 @@ begin
 			
 				if game_loaded = '1' then
 					state_nxt <= IDLE;
+					tmr_rst_nxt			<= '0';
+					tmr_en_nxt			<= '1';
 				end if;
 				
 			when SETTING =>
