@@ -49,7 +49,6 @@ begin
 					cnt			<= cnt + 1;
 				end if;
 				
-				
 				if(tmr_rst = '1') then
 					min		<= (others => '0');
 					sec		<= (others => '0');
