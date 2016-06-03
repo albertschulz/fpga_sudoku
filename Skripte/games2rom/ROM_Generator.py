@@ -3,7 +3,7 @@
 import os
 
 raw_data_filepath = 'files/games.txt'
-number_of_games_to_transfer = 10
+number_of_games_to_transfer = 128 * 3 # 128 games pro schwierigkeitsstufe
 
 lines = [line.rstrip('\n') for line in open(raw_data_filepath)]
 
@@ -20,7 +20,7 @@ if os.path.exists(mif_filepath):
 
 mif_file = open(mif_filepath, 'w')
 
-mif_file.write("DEPTH=2048;\n")
+mif_file.write("DEPTH=65536;\n")
 mif_file.write("WIDTH=8;\n")
 mif_file.write("\n")
 mif_file.write("ADDRESS_RADIX=UNS;\n")
@@ -28,11 +28,11 @@ mif_file.write("DATA_RADIX=UNS;\n")
 mif_file.write("\n")
 mif_file.write("CONTENT BEGIN\n")
 
-for addr in range(0, 2048):
+for addr in range(0, 65536):
 
     digit = '0'
 
-    if addr <= number_of_games_to_transfer * 128:
+    if addr <= number_of_games_to_transfer * 128 - 1:
 
         line_addr = addr//128
         line = lines[line_addr]

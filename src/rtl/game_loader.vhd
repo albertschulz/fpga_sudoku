@@ -15,17 +15,17 @@ entity game_loader is
 	port
 	(	
 		-- Input ports
-		clk				: in  std_logic;
-		rst				: in  std_logic;
+		clk					: in  std_logic;
+		rst					: in  std_logic;
 		load				: in 	std_logic;
-		load_old			: in 	std_logic;
+		load_old		: in 	std_logic;
 		game_diff		: in  std_logic_vector(1 downto 0);
 
 		-- Output ports
 		done				: out std_logic;
 		
 		-- ROM Connection
-		rom_addr_out	: out std_logic_vector(10 downto 0);
+		rom_addr_out	: out std_logic_vector(15 downto 0);
 		rom_data_in		: in  std_logic_vector( 3 downto 0);
 		
 		-- RAM Connection
@@ -38,14 +38,14 @@ end game_loader;
 architecture rtl of game_loader is
 
 	type T_STATE is (IDLE, READ_ROM, WAIT_FOR_ROM, WRITE_RAM, LOADED);
-	signal state 			: T_STATE := IDLE;
-	signal cnt 				: unsigned(6 downto 0) := (others => '0');
-	signal x					: unsigned(3 downto 0) := (others => '0');
-	signal y					: unsigned(3 downto 0) := (others => '0');
-	signal rnd_num			: unsigned(1 downto 0) := (others => '0');
-	signal rnd_old			: unsigned(1 downto 0);
+	signal state 					: T_STATE := IDLE;
+	signal cnt 						: unsigned(6 downto 0) := (others => '0');
+	signal x							: unsigned(3 downto 0) := (others => '0');
+	signal y							: unsigned(3 downto 0) := (others => '0');
+	signal rnd_num				: unsigned(6 downto 0) := (others => '0');
+	signal rnd_old				: unsigned(6 downto 0);
 	signal game_diff_reg	: unsigned(1 downto 0);
-	signal load_old_reg	: std_logic := '0';
+	signal load_old_reg		: std_logic := '0';
 
 begin
 	game_diff_reg	<= unsigned(game_diff);
@@ -54,8 +54,8 @@ begin
 	process (clk)
 	begin
 		if rising_edge(clk) then
-			if(rnd_num = "11") then
-				rnd_num <= "00";
+			if(rnd_num = "1111111") then
+				rnd_num <= to_unsigned(0, rnd_num'length);
 			else
 				rnd_num <= rnd_num + 1;
 			end if;
@@ -66,19 +66,19 @@ begin
 	process (clk)
 		variable preset 	: std_logic;
 		variable selected : std_logic;
-		variable tmp_rnd	: unsigned(1 downto 0);
+		variable tmp_rnd	: unsigned(rnd_num'range);
 	begin
 		if rising_edge(clk) then
-			preset 			:= '1';
-			selected 		:= '0';
+			preset 				:= '1';
+			selected 			:= '0';
 			ram_write_en	<= '0';
-			done				<= '0';
+			done					<= '0';
 		
 			if rst = '1' then
-				cnt 				<= to_unsigned(0, cnt'length);
-				x 					<= to_unsigned(0, x'length);
-				y					<= to_unsigned(0, y'length);
-				state 			<= IDLE;
+				cnt 					<= to_unsigned(0, cnt'length);
+				x 						<= to_unsigned(0, x'length);
+				y							<= to_unsigned(0, y'length);
+				state 				<= IDLE;
 				load_old_reg	<= '0';
 			else
 				if(load_old_reg = '0' and load_old = '1') then
@@ -89,8 +89,8 @@ begin
 					if load = '1' then
 						state		<= READ_ROM;
 						cnt 		<= to_unsigned(0, cnt'length);
-						x			<= to_unsigned(0, x'length);
-						y			<= to_unsigned(0, y'length);
+						x				<= to_unsigned(0, x'length);
+						y				<= to_unsigned(0, y'length);
 						
 						if(load_old_reg = '1') then
 							tmp_rnd			:= rnd_old;

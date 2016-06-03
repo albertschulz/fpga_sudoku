@@ -53,12 +53,12 @@ architecture rtl of system_top is
 	signal sig_vga_dat_o			: std_logic_vector( 2 downto 0);
 	signal sig_img_rom_adr_i	: std_logic_vector( 8 downto 0);
 	signal sig_lbl_rom_adr_i	: std_logic_vector( 8 downto 0);
-	signal sig_game_rom_adr_i	: std_logic_vector(10 downto 0);
-	signal sig_ram_adr_r1		: std_logic_vector( 7 downto 0);
-	signal sig_ram_adr_r2		: std_logic_vector( 7 downto 0);
+	signal sig_game_rom_adr_i	: std_logic_vector(15 downto 0);
+	signal sig_ram_adr_r1			: std_logic_vector( 7 downto 0);
+	signal sig_ram_adr_r2			: std_logic_vector( 7 downto 0);
 	signal sig_ram_dat_i			: std_logic_vector( 5 downto 0);
 	signal sig_ram_adr_w			: std_logic_vector( 7 downto 0);
-	signal sig_ram_we				: std_logic := '0';
+	signal sig_ram_we					: std_logic := '0';
 	
 	-- from: Numbers ROM
 	signal sig_img_rom_dat_i	: std_logic_vector(31 downto 0);
@@ -179,7 +179,7 @@ begin
 		port map (
 			clock				=> clk,
 			address_a		=> sig_game_rom_adr_i,
-			address_b		=> "00000000000",
+			address_b		=> x"0000",
 			q_a 				=> sig_game_rom_dat_i,
 			q_b				=> open
 		);

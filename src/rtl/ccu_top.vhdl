@@ -39,7 +39,7 @@ entity ccu_top is
 		lbl_rom_adr_o	: out std_logic_vector(  8 downto 0);
 		
 		game_rom_dat_i	: in 	std_logic_vector( 7 downto 0);
-		game_rom_adr_o	: out std_logic_vector(10 downto 0);
+		game_rom_adr_o	: out std_logic_vector(15 downto 0);
 		
 		-- RAM-Ports
 		ram_dat_i1		: in	std_logic_vector(5 downto 0);

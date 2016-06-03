@@ -42,8 +42,8 @@ USE altera_mf.altera_mf_components.all;
 ENTITY rom IS
 	PORT
 	(
-		address_a		: IN STD_LOGIC_VECTOR (10 DOWNTO 0);
-		address_b		: IN STD_LOGIC_VECTOR (10 DOWNTO 0);
+		address_a		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		address_b		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 		clock		: IN STD_LOGIC  := '1';
 		q_a		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0);
 		q_b		: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
@@ -74,19 +74,19 @@ BEGIN
 		clock_enable_output_a => "BYPASS",
 		clock_enable_output_b => "BYPASS",
 		indata_reg_b => "CLOCK0",
-		init_file => "ROM.mif",
+		init_file => "../ROM.mif",
 		intended_device_family => "Cyclone III",
 		lpm_type => "altsyncram",
-		numwords_a => 2048,
-		numwords_b => 2048,
+		numwords_a => 65536,
+		numwords_b => 65536,
 		operation_mode => "BIDIR_DUAL_PORT",
 		outdata_aclr_a => "NONE",
 		outdata_aclr_b => "NONE",
 		outdata_reg_a => "UNREGISTERED",
 		outdata_reg_b => "UNREGISTERED",
 		power_up_uninitialized => "FALSE",
-		widthad_a => 11,
-		widthad_b => 11,
+		widthad_a => 16,
+		widthad_b => 16,
 		width_a => 8,
 		width_b => 8,
 		width_byteena_a => 1,
@@ -142,9 +142,9 @@ END SYN;
 -- Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 -- Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 -- Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
--- Retrieval info: PRIVATE: MEMSIZE NUMERIC "16384"
+-- Retrieval info: PRIVATE: MEMSIZE NUMERIC "524288"
 -- Retrieval info: PRIVATE: MEM_IN_BITS NUMERIC "0"
--- Retrieval info: PRIVATE: MIFfilename STRING "ROM.mif"
+-- Retrieval info: PRIVATE: MIFfilename STRING "../ROM.mif"
 -- Retrieval info: PRIVATE: OPERATION_MODE NUMERIC "3"
 -- Retrieval info: PRIVATE: OUTDATA_ACLR_B NUMERIC "0"
 -- Retrieval info: PRIVATE: OUTDATA_REG_B NUMERIC "0"
@@ -176,31 +176,31 @@ END SYN;
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
 -- Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_B STRING "BYPASS"
 -- Retrieval info: CONSTANT: INDATA_REG_B STRING "CLOCK0"
--- Retrieval info: CONSTANT: INIT_FILE STRING "ROM.mif"
+-- Retrieval info: CONSTANT: INIT_FILE STRING "../ROM.mif"
 -- Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone III"
 -- Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
--- Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "2048"
--- Retrieval info: CONSTANT: NUMWORDS_B NUMERIC "2048"
+-- Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "65536"
+-- Retrieval info: CONSTANT: NUMWORDS_B NUMERIC "65536"
 -- Retrieval info: CONSTANT: OPERATION_MODE STRING "BIDIR_DUAL_PORT"
 -- Retrieval info: CONSTANT: OUTDATA_ACLR_A STRING "NONE"
 -- Retrieval info: CONSTANT: OUTDATA_ACLR_B STRING "NONE"
 -- Retrieval info: CONSTANT: OUTDATA_REG_A STRING "UNREGISTERED"
 -- Retrieval info: CONSTANT: OUTDATA_REG_B STRING "UNREGISTERED"
 -- Retrieval info: CONSTANT: POWER_UP_UNINITIALIZED STRING "FALSE"
--- Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "11"
--- Retrieval info: CONSTANT: WIDTHAD_B NUMERIC "11"
+-- Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "16"
+-- Retrieval info: CONSTANT: WIDTHAD_B NUMERIC "16"
 -- Retrieval info: CONSTANT: WIDTH_A NUMERIC "8"
 -- Retrieval info: CONSTANT: WIDTH_B NUMERIC "8"
 -- Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"
 -- Retrieval info: CONSTANT: WIDTH_BYTEENA_B NUMERIC "1"
 -- Retrieval info: CONSTANT: WRCONTROL_WRADDRESS_REG_B STRING "CLOCK0"
--- Retrieval info: USED_PORT: address_a 0 0 11 0 INPUT NODEFVAL "address_a[10..0]"
--- Retrieval info: USED_PORT: address_b 0 0 11 0 INPUT NODEFVAL "address_b[10..0]"
+-- Retrieval info: USED_PORT: address_a 0 0 16 0 INPUT NODEFVAL "address_a[15..0]"
+-- Retrieval info: USED_PORT: address_b 0 0 16 0 INPUT NODEFVAL "address_b[15..0]"
 -- Retrieval info: USED_PORT: clock 0 0 0 0 INPUT VCC "clock"
 -- Retrieval info: USED_PORT: q_a 0 0 8 0 OUTPUT NODEFVAL "q_a[7..0]"
 -- Retrieval info: USED_PORT: q_b 0 0 8 0 OUTPUT NODEFVAL "q_b[7..0]"
--- Retrieval info: CONNECT: @address_a 0 0 11 0 address_a 0 0 11 0
--- Retrieval info: CONNECT: @address_b 0 0 11 0 address_b 0 0 11 0
+-- Retrieval info: CONNECT: @address_a 0 0 16 0 address_a 0 0 16 0
+-- Retrieval info: CONNECT: @address_b 0 0 16 0 address_b 0 0 16 0
 -- Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
 -- Retrieval info: CONNECT: @data_a 0 0 8 0 GND 0 0 8 0
 -- Retrieval info: CONNECT: @data_b 0 0 8 0 GND 0 0 8 0
