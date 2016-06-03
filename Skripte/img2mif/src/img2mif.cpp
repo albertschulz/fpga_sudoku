@@ -35,6 +35,7 @@ int bbp;
 unsigned char *data;
 
 char *filename;
+char *output_filename;
 
 int i;
 int j;
@@ -50,10 +51,10 @@ char *mif_header0 = "-- Created with Parker Dillmann's im2mif file converter.\n-
 int main(int argc, char* argv[])
 {
 	//Error if not enough arguements and display "help".
-	if (argc != 6)
+	if (argc != 7)
 	{
 		printf("\nInvalid arguements.");
-		printf("\nUSAGE: img2mif -width -depth -bpp -color");
+		printf("\nUSAGE: img2mif image.bmp result.mif -width -depth -bpp -color");
 		printf("\n");
 		printf("\n-width : Width of memory in bits. Only support for 8, 16, 32, 64, 128 at the moment.\n-depth : Depth of the memory structure. Only valid choices are 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288.\n-bpp : Bits per pixel of the output. Uses basic thresholding to truncate image data.\n-color: Set to 0 for auto RGB output. Set to 1 for Grayscale.");
 		printf("\n");
@@ -73,11 +74,11 @@ int main(int argc, char* argv[])
 	printf("\nFile: %s found and opened. ", argv[1]);
 
 	filename = strtok(argv[1], ".");
-	
-	bitwidth = atoi(argv[2]);
-	memdepth = atoi(argv[3]);
-	bbp = atoi(argv[4]);
-	convert2bw = atoi(argv[5]);
+    output_filename = argv[2];	
+	bitwidth = atoi(argv[3]);
+	memdepth = atoi(argv[4]);
+	bbp = atoi(argv[5]);
+	convert2bw = atoi(argv[6]);
 
 	//Scrub inputs. 
 	if (convert2bw != 0 && convert2bw != 1 && convert2bw != 2)
@@ -119,7 +120,7 @@ int main(int argc, char* argv[])
 	printf("Create %s.mif file with Width: %d and Depth: %d.\n", filename, bitwidth, memdepth);
 
 	//Create output file. Same name as input image.
-	FILE *fo = fopen(strcat(filename, ".mif"), "w");
+	FILE *fo = fopen(output_filename, "w");
 
 	if (fo == 0)
 	{
