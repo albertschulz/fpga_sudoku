@@ -14,41 +14,44 @@ use work.const_package.all;
 
 entity ccu_top is
 	port(
-		clk	      	: in  std_logic;
-		rst				: in  std_logic;
+		clk	      		: in  std_logic;
+		rst					: in  std_logic;
 		
 		-- PS2-Input-Ports
-		ps2_dat_en		: in	std_logic;
-		ps2_dat_i		: in	std_logic_vector(7 downto 0);
+		ps2_dat_en			: in	std_logic;
+		ps2_dat_i			: in	std_logic_vector(7 downto 0);
 		
 		-- VGA-Position-Input-Ports
-		vga_pos_x		: in  integer range 0 to 640;
-		vga_pos_y		: in  integer range 0 to 480;
+		vga_pos_x			: in  integer range 0 to 640;
+		vga_pos_y			: in  integer range 0 to 480;
 		
 		-- Controller-Ouput-Ports
-		led_mde_o		: out std_logic;
-		seg_dat_o		: out std_logic_vector(27 downto 0);
-		vga_dat_o		: out std_logic_vector( 2 downto 0);
-		led_solved		: out std_logic;
+		led_mde_o			: out std_logic;
+		seg_dat_o			: out std_logic_vector(27 downto 0);
+		vga_dat_o			: out std_logic_vector( 2 downto 0);
+		led_solved			: out std_logic;
 		
 		-- ROM-Ports
-		img_rom_dat_i	: in	std_logic_vector(31 downto 0);
-		img_rom_adr_o	: out std_logic_vector( 8 downto 0);
+		img_rom_dat_i		: in	std_logic_vector(31 downto 0);
+		img_rom_adr_o		: out std_logic_vector( 8 downto 0);
 		
-		lbl_rom_dat_i	: in	std_logic_vector(127 downto 0);
-		lbl_rom_adr_o	: out std_logic_vector(  8 downto 0);
+		lbl_rom_dat_i		: in	std_logic_vector(127 downto 0);
+		lbl_rom_adr_o		: out std_logic_vector(  8 downto 0);
 		
-		game_rom_dat_i	: in 	std_logic_vector( 7 downto 0);
-		game_rom_adr_o	: out std_logic_vector(10 downto 0);
+		lbl_h_rom_dat_i	: in	std_logic_vector(255 downto 0);
+		lbl_h_rom_adr_o	: out std_logic_vector(  9 downto 0);
+		
+		game_rom_dat_i		: in 	std_logic_vector( 7 downto 0);
+		game_rom_adr_o		: out std_logic_vector(10 downto 0);
 		
 		-- RAM-Ports
-		ram_dat_i1		: in	std_logic_vector(5 downto 0);
-		ram_dat_i2		: in	std_logic_vector(5 downto 0);
-		ram_adr_r1		: out	std_logic_vector(7 downto 0);
-		ram_adr_r2		: out	std_logic_vector(7 downto 0);
-		ram_adr_w		: out	std_logic_vector(7 downto 0);
-		ram_dat_o		: out	std_logic_vector(5 downto 0);
-		ram_we			: out	std_logic		
+		ram_dat_i1			: in	std_logic_vector(5 downto 0);
+		ram_dat_i2			: in	std_logic_vector(5 downto 0);
+		ram_adr_r1			: out	std_logic_vector(7 downto 0);
+		ram_adr_r2			: out	std_logic_vector(7 downto 0);
+		ram_adr_w			: out	std_logic_vector(7 downto 0);
+		ram_dat_o			: out	std_logic_vector(5 downto 0);
+		ram_we				: out	std_logic		
 	);	
 end ccu_top;
 
@@ -95,21 +98,23 @@ begin
 	-- Pixel-Buffer
 	pxl_buf : entity work.pxl_buffer
 		port map(
-			clk 				=> clk,
-			tme_i				=> sig_tme_out,
-			game_state		=> sig_game_state,
-			game_menu		=> sig_game_menu,
-			game_diff		=> sig_game_diff,
-			game_btn_act	=> sig_game_btn_act,
-			vga_pos_x		=> vga_pos_x,
-			vga_pos_y		=> vga_pos_y,
-			vga_dat_o		=> vga_dat_o,
-			rom_img_dat_i	=> img_rom_dat_i,
-			rom_img_adr_o	=> img_rom_adr_o,
-			rom_lbl_dat_i	=> lbl_rom_dat_i,
-			rom_lbl_adr_o	=> lbl_rom_adr_o,
-			ram_dat_i		=> ram_dat_i2,
-			ram_adr_r		=> ram_adr_r2
+			clk 					=> clk,
+			tme_i					=> sig_tme_out,
+			game_state			=> sig_game_state,
+			game_menu			=> sig_game_menu,
+			game_diff			=> sig_game_diff,
+			game_btn_act		=> sig_game_btn_act,
+			vga_pos_x			=> vga_pos_x,
+			vga_pos_y			=> vga_pos_y,
+			vga_dat_o			=> vga_dat_o,
+			rom_img_dat_i		=> img_rom_dat_i,
+			rom_img_adr_o		=> img_rom_adr_o,
+			rom_lbl_dat_i		=> lbl_rom_dat_i,
+			rom_lbl_adr_o		=> lbl_rom_adr_o,
+			rom_lbl_h_dat_i	=> lbl_h_rom_dat_i,
+			rom_lbl_h_adr_o	=> lbl_h_rom_adr_o,
+			ram_dat_i			=> ram_dat_i2,
+			ram_adr_r			=> ram_adr_r2
 		);
 		
 	-- Game-Controller

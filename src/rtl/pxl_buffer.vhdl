@@ -13,26 +13,28 @@ use ieee.numeric_std.all;
 
 entity pxl_buffer is
 	port(
-		clk				: in	std_logic;
+		clk					: in	std_logic;
 		
-		tme_i				: in	std_logic_vector(12 downto 0);
+		tme_i					: in	std_logic_vector(12 downto 0);
 		
-		game_state		: in	std_logic;
-		game_menu		: in	std_logic;
-		game_diff		: in  std_logic_vector(1 downto 0);
-		game_btn_act	: in  std_logic_vector(3 downto 0);
+		game_state			: in	std_logic;
+		game_menu			: in	std_logic;
+		game_diff			: in  std_logic_vector(1 downto 0);
+		game_btn_act		: in  std_logic_vector(3 downto 0);
 		
-		vga_pos_x		: in  integer range 0 to 640;
-		vga_pos_y		: in  integer range 0 to 480;
-		vga_dat_o		: out	std_logic_vector(  2 downto 0);
+		vga_pos_x			: in  integer range 0 to 640;
+		vga_pos_y			: in  integer range 0 to 480;
+		vga_dat_o			: out	std_logic_vector(  2 downto 0);
 		
-		rom_img_dat_i	: in	std_logic_vector( 31 downto 0);
-		rom_img_adr_o	: out std_logic_vector(  8 downto 0);
-		rom_lbl_dat_i	: in	std_logic_vector(127 downto 0);
-		rom_lbl_adr_o	: out std_logic_vector(  8 downto 0);
+		rom_img_dat_i		: in	std_logic_vector( 31 downto 0);
+		rom_img_adr_o		: out std_logic_vector(  8 downto 0);
+		rom_lbl_dat_i		: in	std_logic_vector(127 downto 0);
+		rom_lbl_adr_o		: out std_logic_vector(  8 downto 0);
+		rom_lbl_h_dat_i	: in	std_logic_vector(255 downto 0);
+		rom_lbl_h_adr_o	: out std_logic_vector(  9 downto 0);
 		
-		ram_dat_i		: in	std_logic_vector(  5 downto 0);
-		ram_adr_r		: out	std_logic_vector(  7 downto 0)
+		ram_dat_i			: in	std_logic_vector(  5 downto 0);
+		ram_adr_r			: out	std_logic_vector(  7 downto 0)
 	);	
 end pxl_buffer;
 

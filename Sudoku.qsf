@@ -154,4 +154,5 @@ set_global_assignment -name VHDL_TEST_BENCH_FILE src/tb/game_loader_tb.vhd
 set_global_assignment -name VHDL_FILE src/rtl/solution_checker.vhd
 set_global_assignment -name VHDL_FILE src/tb/solution_checker_tb.vhd
 set_global_assignment -name VHDL_FILE src/rtl/tmr_clk.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/rom_lbl_header.vhdl
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

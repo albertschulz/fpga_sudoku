@@ -53,6 +53,7 @@ architecture rtl of system_top is
 	signal sig_vga_dat_o			: std_logic_vector( 2 downto 0);
 	signal sig_img_rom_adr_i	: std_logic_vector( 8 downto 0);
 	signal sig_lbl_rom_adr_i	: std_logic_vector( 8 downto 0);
+	signal sig_lbl_h_rom_adr_i	: std_logic_vector( 9 downto 0);
 	signal sig_game_rom_adr_i	: std_logic_vector(10 downto 0);
 	signal sig_ram_adr_r1		: std_logic_vector( 7 downto 0);
 	signal sig_ram_adr_r2		: std_logic_vector( 7 downto 0);
@@ -65,6 +66,9 @@ architecture rtl of system_top is
 	
 	-- from: Label ROM
 	signal sig_lbl_rom_dat_i	: std_logic_vector(127 downto 0);
+	
+	-- from: Headerlabel ROM
+	signal sig_lbl_h_rom_dat_i	: std_logic_vector(255 downto 0);
 	
 	-- from: Games ROM
 	signal sig_game_rom_dat_i	: std_logic_vector(7 downto 0);
@@ -122,29 +126,31 @@ begin
 	-- CCU-Top
 	ccu_top : entity work.ccu_top
 		port map(
-			clk				=> clk,
-			rst				=> rst,
-			ps2_dat_en		=> sig_ps2_dat_en,
-			ps2_dat_i		=> sig_ps2_dat_o,
-			vga_pos_x		=> sig_vga_pos_x,
-			vga_pos_y		=> sig_vga_pos_y,
-			led_mde_o		=> led_mde_o,
-			seg_dat_o		=> sig_seg_dat_o,
-			vga_dat_o		=> sig_vga_dat_o,
-			img_rom_dat_i	=> sig_img_rom_dat_i,
-			img_rom_adr_o	=> sig_img_rom_adr_i,
-			lbl_rom_dat_i	=> sig_lbl_rom_dat_i,
-			lbl_rom_adr_o	=> sig_lbl_rom_adr_i,
-			game_rom_dat_i	=> sig_game_rom_dat_i,
-			game_rom_adr_o	=> sig_game_rom_adr_i,
-			ram_dat_i1		=> sig_ram_dat_to_ccu1,
-			ram_dat_i2		=> sig_ram_dat_to_ccu2,
-			ram_dat_o		=> sig_ram_dat_i,
-			ram_adr_r1		=> sig_ram_adr_r1,
-			ram_adr_r2		=> sig_ram_adr_r2,
-			ram_adr_w		=> sig_ram_adr_w,
-			ram_we			=> sig_ram_we,
-			led_solved		=> led_solved
+			clk					=> clk,
+			rst					=> rst,
+			ps2_dat_en			=> sig_ps2_dat_en,
+			ps2_dat_i			=> sig_ps2_dat_o,
+			vga_pos_x			=> sig_vga_pos_x,
+			vga_pos_y			=> sig_vga_pos_y,
+			led_mde_o			=> led_mde_o,
+			seg_dat_o			=> sig_seg_dat_o,
+			vga_dat_o			=> sig_vga_dat_o,
+			img_rom_dat_i		=> sig_img_rom_dat_i,
+			img_rom_adr_o		=> sig_img_rom_adr_i,
+			lbl_rom_dat_i		=> sig_lbl_rom_dat_i,
+			lbl_rom_adr_o		=> sig_lbl_rom_adr_i,
+			lbl_h_rom_dat_i	=> sig_lbl_h_rom_dat_i,
+			lbl_h_rom_adr_o	=> sig_lbl_h_rom_adr_i,
+			game_rom_dat_i		=> sig_game_rom_dat_i,
+			game_rom_adr_o		=> sig_game_rom_adr_i,
+			ram_dat_i1			=> sig_ram_dat_to_ccu1,
+			ram_dat_i2			=> sig_ram_dat_to_ccu2,
+			ram_dat_o			=> sig_ram_dat_i,
+			ram_adr_r1			=> sig_ram_adr_r1,
+			ram_adr_r2			=> sig_ram_adr_r2,
+			ram_adr_w			=> sig_ram_adr_w,
+			ram_we				=> sig_ram_we,
+			led_solved			=> led_solved
 		);
 		
 	-- RAM-Game
@@ -172,6 +178,13 @@ begin
 		port map(
 			rom_adr_i		=> sig_lbl_rom_adr_i,
 			rom_dat_o		=> sig_lbl_rom_dat_i
+		);
+	
+	-- ROM-Header-Labels
+	rom_lbl_head : entity work.rom_lbl_header
+		port map(
+			rom_adr_i		=> sig_lbl_h_rom_adr_i,
+			rom_dat_o		=> sig_lbl_h_rom_dat_i
 		);
 	
 	-- ROM-Games
