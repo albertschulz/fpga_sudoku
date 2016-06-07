@@ -155,4 +155,13 @@ set_global_assignment -name VHDL_FILE src/rtl/solution_checker.vhd
 set_global_assignment -name VHDL_FILE src/tb/solution_checker_tb.vhd
 set_global_assignment -name VHDL_FILE src/rtl/tmr_clk.vhdl
 set_global_assignment -name VHDL_FILE src/rtl/rom_lbl_header.vhdl
+set_global_assignment -name VHDL_FILE src/rtl/switches_controller.vhdl
+set_location_assignment PIN_H7 -to sw_dat[6]
+set_location_assignment PIN_J7 -to sw_dat[5]
+set_location_assignment PIN_G5 -to sw_dat[4]
+set_location_assignment PIN_G4 -to sw_dat[3]
+set_location_assignment PIN_H6 -to sw_dat[2]
+set_location_assignment PIN_H5 -to sw_dat[1]
+set_location_assignment PIN_J6 -to sw_dat[0]
+set_global_assignment -name VHDL_FILE src/rtl/rom_tmr.vhdl
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

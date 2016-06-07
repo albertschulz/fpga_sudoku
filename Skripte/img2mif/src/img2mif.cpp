@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 		convert2bw = 0;
 	}
 
-	if (bitwidth != 8 && bitwidth != 16 && bitwidth != 32 && bitwidth != 64 && bitwidth != 128)
+	if (bitwidth != 8 && bitwidth != 16 && bitwidth != 32 && bitwidth != 64 && bitwidth != 128 && bitwidth != 256)
 	{
 		printf("\nBit width for memory invalid. Only support for 8, 16, 32, 64, 128 at the moment.");
 		return 1;

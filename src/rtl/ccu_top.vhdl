@@ -21,6 +21,10 @@ entity ccu_top is
 		ps2_dat_en			: in	std_logic;
 		ps2_dat_i			: in	std_logic_vector(7 downto 0);
 		
+		-- Switches-Input-Ports
+		sw_dat_en			: in	std_logic;
+		sw_dat_i				: in	std_logic_vector(6 downto 0);
+		
 		-- VGA-Position-Input-Ports
 		vga_pos_x			: in  integer range 0 to 640;
 		vga_pos_y			: in  integer range 0 to 480;
@@ -35,14 +39,17 @@ entity ccu_top is
 		img_rom_dat_i		: in	std_logic_vector(31 downto 0);
 		img_rom_adr_o		: out std_logic_vector( 8 downto 0);
 		
+		tmr_rom_dat_i		: in	std_logic_vector(23 downto 0);
+		tmr_rom_adr_o		: out std_logic_vector( 8 downto 0);
+		
 		lbl_rom_dat_i		: in	std_logic_vector(127 downto 0);
 		lbl_rom_adr_o		: out std_logic_vector(  8 downto 0);
 		
 		
-    game_rom_dat_i	: in 	std_logic_vector( 7 downto 0);
-		game_rom_adr_o	: out std_logic_vector(15 downto 0);
+		game_rom_dat_i		: in 	std_logic_vector( 7 downto 0);
+		game_rom_adr_o		: out std_logic_vector(15 downto 0);
 		
-    lbl_h_rom_dat_i	: in	std_logic_vector(255 downto 0);
+		lbl_h_rom_dat_i	: in	std_logic_vector(255 downto 0);
 		lbl_h_rom_adr_o	: out std_logic_vector(  9 downto 0);
 		
 		-- RAM-Ports
@@ -75,10 +82,12 @@ architecture rtl of ccu_top is
 	signal gc_ram_we			: std_logic;
 	signal sig_game_state	: std_logic;
 	signal sig_game_menu		: std_logic;
+	signal sig_game_won		: std_logic_vector(1 downto 0);
 	signal sig_game_diff		: std_logic_vector(1 downto 0);
 	signal sig_game_btn_act	: std_logic_vector(3 downto 0);
 	signal sig_tmr_rst		: std_logic;
 	signal sig_tmr_en			: std_logic;
+	signal sig_tme_en			: std_logic;
 	
 	-- from: CLK-Timer
 	signal sig_tme_out		: std_logic_vector(12 downto 0);
@@ -100,9 +109,11 @@ begin
 	pxl_buf : entity work.pxl_buffer
 		port map(
 			clk 					=> clk,
-			tme_i					=> sig_tme_out,
+			tme_en				=> sig_tme_en,
+			tme_dat_i			=> sig_tme_out,
 			game_state			=> sig_game_state,
 			game_menu			=> sig_game_menu,
+			game_won				=> sig_game_won,
 			game_diff			=> sig_game_diff,
 			game_btn_act		=> sig_game_btn_act,
 			vga_pos_x			=> vga_pos_x,
@@ -110,6 +121,8 @@ begin
 			vga_dat_o			=> vga_dat_o,
 			rom_img_dat_i		=> img_rom_dat_i,
 			rom_img_adr_o		=> img_rom_adr_o,
+			rom_tmr_dat_i		=> tmr_rom_dat_i,
+			rom_tmr_adr_o		=> tmr_rom_adr_o,
 			rom_lbl_dat_i		=> lbl_rom_dat_i,
 			rom_lbl_adr_o		=> lbl_rom_adr_o,
 			rom_lbl_h_dat_i	=> lbl_h_rom_dat_i,
@@ -135,10 +148,12 @@ begin
 			game_solved		=> led_solved,
 			game_state		=> sig_game_state,
 			game_menu		=> sig_game_menu,
+			game_won			=> sig_game_won,
 			game_diff		=> sig_game_diff,
 			game_btn_act	=> sig_game_btn_act,
 			tmr_rst			=> sig_tmr_rst,
-			tmr_en			=> sig_tmr_en
+			tmr_en			=> sig_tmr_en,
+			tme_en			=> sig_tme_en
 		);
 		
 	-- Game Loader
@@ -154,7 +169,9 @@ begin
 			done			 	=> game_loaded,
 			ram_addr_out 	=> gl_ram_adr_w,
 			ram_data_out 	=> gl_ram_dat_o,
-			ram_write_en 	=> gl_ram_we
+			ram_write_en 	=> gl_ram_we,
+			sw_dat_en		=> sw_dat_en,
+			sw_dat_i			=> sw_dat_i
 		);
 		
 	--CLK-Timer

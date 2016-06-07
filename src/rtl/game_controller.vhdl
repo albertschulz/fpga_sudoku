@@ -29,13 +29,15 @@ entity game_controller is
 		game_solved		: out std_logic;
 		game_state		: out std_logic;
 		game_menu		: out	std_logic;
+		game_won			: out std_logic_vector(1 downto 0);
 		game_diff		: out std_logic_vector(1 downto 0);
 		game_btn_act	: out std_logic_vector(3 downto 0);
 		load_game		: buffer std_logic;
 		load_old_game	: out std_logic;
 		
 		tmr_rst			: out	std_logic;
-		tmr_en			: out	std_logic
+		tmr_en			: out	std_logic;
+		tme_en			: out	std_logic
 	);	
 end game_controller;
 
@@ -56,6 +58,8 @@ architecture rtl of game_controller is
 	--signal game_menu_nxt		: std_logic;
 	signal game_diff_reg		: std_logic_vector(1 downto 0) := "01";	-- "01" -> easy, "10" -> medium, "11" -> hard
 	signal game_diff_nxt		: std_logic_vector(1 downto 0);
+	signal game_won_reg		: std_logic_vector(1 downto 0) := "00";	-- "11" -> won, "10" -> lost
+	signal game_won_nxt		: std_logic_vector(1 downto 0);
 	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0001";
 	signal game_btn_act_nxt	: std_logic_vector(3 downto 0);
 	
@@ -106,6 +110,7 @@ begin
 				game_solved_reg	<= '0';
 				game_state_reg		<= '0';
 				game_diff_reg		<= "01";
+				game_won_reg		<= "00";
 				game_btn_act_reg	<= "0001";
 				tmr_rst_reg			<= '0';
 				tmr_en_reg			<= '0';
@@ -115,6 +120,7 @@ begin
 				game_solved_reg	<= game_solved_nxt;
 				game_state_reg		<= game_state_nxt;
 				game_diff_reg		<= game_diff_nxt;
+				game_won_reg		<= game_won_nxt;
 				game_btn_act_reg	<= game_btn_act_nxt;
 				tmr_rst_reg			<= tmr_rst_nxt;
 				tmr_en_reg			<= tmr_en_nxt;
@@ -122,7 +128,7 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg, tmr_rst_reg, tmr_en_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg, tmr_rst_reg, tmr_en_reg, game_won_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
@@ -130,6 +136,7 @@ begin
 		tmr_en_nxt			<= tmr_en_reg;
 		game_state_nxt		<= game_state_reg;
 		game_diff_nxt		<= game_diff_reg;
+		game_won_nxt		<= game_won_reg;
 		game_btn_act_nxt	<= game_btn_act_reg;
 		game_solved_nxt	<= game_solved_reg;
 		tsk_sta				<= "00";
@@ -244,9 +251,10 @@ begin
 				load_game	<= '1';
 			
 				if game_loaded = '1' then
-					state_nxt <= IDLE;
-					tmr_rst_nxt			<= '0';
-					tmr_en_nxt			<= '1';
+					state_nxt 		<= IDLE;
+					game_won_nxt	<= "00";
+					tmr_rst_nxt		<= '0';
+					tmr_en_nxt		<= '1';
 				end if;
 				
 			when SETTING =>
@@ -261,13 +269,10 @@ begin
 				if checked = '1' then
 					state_nxt <= IDLE;
 					
-					-- TODO: Display (in)correct solution
-					if correct = '1' then
-						-- Solution is correct
-						game_solved_nxt <= '1';
-						
-					else
-						-- Solution is not correct
+					if correct = '1' then	-- Solution is correct
+						game_solved_nxt	<= '1';
+						game_won_nxt		<= "11";
+					else							-- Solution is not correct
 						game_solved_nxt <= '0';
 					end if;
 				end if;
@@ -405,6 +410,7 @@ begin
 	
 	game_state 		<= game_state_reg;
 	game_menu 		<= game_menu_reg;
+	game_won 		<= game_won_reg;
 	game_diff		<= game_diff_reg;
 	game_btn_act	<= game_btn_act_reg;
 	game_solved  	<= game_solved_reg;

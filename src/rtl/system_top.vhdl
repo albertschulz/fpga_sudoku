@@ -19,6 +19,8 @@ entity system_top is
 		ps2_clk			: in	std_logic;
 		ps2_dat			: in	std_logic;
 		
+		sw_dat			: in  std_logic_vector(6 downto 0);
+		
 		vga_red_d		: out std_logic_vector(3 downto 0);
 		vga_gre_d		: out std_logic_vector(3 downto 0);
 		vga_blu_d		: out std_logic_vector(3 downto 0);
@@ -44,6 +46,10 @@ architecture rtl of system_top is
 	signal sig_ps2_dat_o			: std_logic_vector(7 downto 0);
 	signal sig_ps2_dat_en		: std_logic := '0';
 	
+	-- from: Switches-Controller
+	signal sig_sw_dat_en			: std_logic;
+	signal sig_sw_dat_o			: std_logic_vector(6 downto 0);
+	
 	-- from: VGA-Controller
 	signal sig_vga_pos_x			: integer := 0;
 	signal sig_vga_pos_y			: integer := 0;
@@ -52,6 +58,7 @@ architecture rtl of system_top is
 	signal sig_seg_dat_o			: std_logic_vector(27 downto 0);
 	signal sig_vga_dat_o			: std_logic_vector( 2 downto 0);
 	signal sig_img_rom_adr_i	: std_logic_vector( 8 downto 0);
+	signal sig_tmr_rom_adr_i	: std_logic_vector( 8 downto 0);
 	signal sig_lbl_rom_adr_i	: std_logic_vector( 8 downto 0);
 	signal sig_game_rom_adr_i	: std_logic_vector(15 downto 0);
 	signal sig_ram_adr_r1			: std_logic_vector( 7 downto 0);
@@ -63,6 +70,9 @@ architecture rtl of system_top is
 	
 	-- from: Numbers ROM
 	signal sig_img_rom_dat_i	: std_logic_vector(31 downto 0);
+	
+	-- from: Timer ROM
+	signal sig_tmr_rom_dat_i	: std_logic_vector(23 downto 0);
 	
 	-- from: Label ROM
 	signal sig_lbl_rom_dat_i	: std_logic_vector(127 downto 0);
@@ -94,6 +104,15 @@ begin
 			ps2_dat_i		=> ps2_dat,
 			ps2_dat_o		=> sig_ps2_dat_o,
 			ps2_dat_en		=> sig_ps2_dat_en
+		);
+		
+	-- Switches-Controller
+	sw_ctr : entity work.switches_controller
+		port map(
+			clk				=> clk,
+			sw_dat_i			=> sw_dat,
+			sw_dat_en		=> sig_sw_dat_en,
+			sw_dat_o			=> sig_sw_dat_o
 		);
 		
 	-- VGA-Controller
@@ -130,6 +149,8 @@ begin
 			rst					=> rst,
 			ps2_dat_en			=> sig_ps2_dat_en,
 			ps2_dat_i			=> sig_ps2_dat_o,
+			sw_dat_en			=> sig_sw_dat_en,
+			sw_dat_i				=> sig_sw_dat_o,
 			vga_pos_x			=> sig_vga_pos_x,
 			vga_pos_y			=> sig_vga_pos_y,
 			led_mde_o			=> led_mde_o,
@@ -137,6 +158,8 @@ begin
 			vga_dat_o			=> sig_vga_dat_o,
 			img_rom_dat_i		=> sig_img_rom_dat_i,
 			img_rom_adr_o		=> sig_img_rom_adr_i,
+			tmr_rom_dat_i		=> sig_tmr_rom_dat_i,
+			tmr_rom_adr_o		=> sig_tmr_rom_adr_i,
 			lbl_rom_dat_i		=> sig_lbl_rom_dat_i,
 			lbl_rom_adr_o		=> sig_lbl_rom_adr_i,
 			lbl_h_rom_dat_i	=> sig_lbl_h_rom_dat_i,
@@ -173,6 +196,13 @@ begin
 			rom_dat_o		=> sig_img_rom_dat_i
 		);
 	
+	-- ROM-Timer
+	rom_tmr : entity work.rom_tmr
+		port map(
+			rom_adr_i		=> sig_tmr_rom_adr_i,
+			rom_dat_o		=> sig_tmr_rom_dat_i
+		);
+		
 	-- ROM-Labels
 	rom_lbl : entity work.rom_lbl
 		port map(
