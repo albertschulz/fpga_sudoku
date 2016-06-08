@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP3C16F484) Path("/home/kppe15c/Schreibtisch/Projekt - Sudoku/output_files/") File("Sudoku.sof") MfrSpec(OpMask(1));
+		Device PartName(EP3C16F484) Path("/home/schulz/git/fpga_sudoku/output_files/") File("Sudoku.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
