@@ -15,7 +15,7 @@ entity pxl_buffer is
 	port(
 		clk					: in	std_logic;
 		
-		tme_dat_i			: in	std_logic_vector(12 downto 0);
+		tme_dat_i			: in	std_logic_vector(14 downto 0);
 		
 		game_state			: in	std_logic;
 		game_menu			: in	std_logic;
@@ -72,6 +72,7 @@ architecture rtl of pxl_buffer is
 	signal pos_y_cur		: integer range 0 to PXL_DSP_V := 0;
 	signal pos_y_nxt		: integer range 0 to PXL_DSP_V := 0;
 	signal pos_y_off		: integer range 0 to PXL_DSP_V := 0;
+	signal pos_y_tmr		: integer range 0 to PXL_DSP_V := 0;
 	
 	signal cnt_x			: unsigned(3 downto 0) := (others => '0');
 	signal cnt_y			: unsigned(3 downto 0) := (others => '0');
@@ -112,7 +113,7 @@ begin
 		variable pos_x_off 	: integer := 0;
 	begin
 		if rising_edge(clk) then
-			if(buf_start = "01") then			-- horizontal lines
+			if(buf_start = "01") then									-- horizontal lines
 				for i in 0 to PXL_FLD_SZE - 1 loop
 					buf_lne_nxt(i) <= "001";
 				end loop;
@@ -339,21 +340,50 @@ begin
 	process(clk)
 	begin
 		if rising_edge(clk) then
-			if(buf_tsk2_cnt = "000") then
+			if(game_state = '1' and pos_y_tmr /= 0) then
+				if(buf_tsk2_cnt = "000") then
+					rom_tmr_adr_o <= tme_dat_i(14 downto 11) & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_tmr), 5));
+				elsif(buf_tsk2_cnt = "001") then
+					for i in 0 to 23 loop
+						buf_lbl_tmr_nxt(i) <= "00" & rom_tmr_dat_i(23 - i);
+					end loop;
+					
+					rom_tmr_adr_o <= tme_dat_i(10 downto 7) & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_tmr), 5));
 				
-				rom_lbl_h_adr_o <= rom_adr_pre & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_off), 5));
+				elsif(buf_tsk2_cnt = "010") then
+					for i in 0 to 23 loop
+						buf_lbl_tmr_nxt(i + 24) <= "00" & rom_tmr_dat_i(23 - i);
+					end loop;
 				
-			elsif(buf_tsk2_cnt = "000") then
-			
-				for i in 0 to 119 loop
-					buf_lbl_tmr_nxt(i) <= "00" & rom_lbl_h_dat_i(119 - i);
-				end loop;
-			end if;
-			
-			if(buf_tsk2_cnt = "000") then
-				buf_tsk2_cnt	<= "000";
+					rom_tmr_adr_o <= "1010" & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_tmr), 5));
+				
+				elsif(buf_tsk2_cnt = "011") then
+					for i in 0 to 23 loop
+						buf_lbl_tmr_nxt(i + 48) <= "00" & rom_tmr_dat_i(23 - i);
+					end loop;
+					
+					rom_tmr_adr_o <= '0' & tme_dat_i(6 downto 4) & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_tmr), 5));
+					
+				elsif(buf_tsk2_cnt = "100") then
+					for i in 0 to 23 loop
+						buf_lbl_tmr_nxt(i + 72) <= "00" & rom_tmr_dat_i(23 - i);
+					end loop;
+		
+					rom_tmr_adr_o <= tme_dat_i(3 downto 0) & std_logic_vector(to_unsigned((pos_y_nxt - pos_y_tmr), 5));
+				
+				elsif(buf_tsk2_cnt = "101") then
+					for i in 0 to 23 loop
+						buf_lbl_tmr_nxt(i + 96) <= "00" & rom_tmr_dat_i(23 - i);
+					end loop;
+				end if;
+				
+				if(buf_tsk2_cnt = "101") then
+					buf_tsk2_cnt	<= "000";
+				else
+					buf_tsk2_cnt	<= buf_tsk2_cnt + 1;
+				end if;
 			else
-				buf_tsk2_cnt	<= buf_tsk2_cnt + 1;
+				buf_lbl_tmr_nxt <= (others => "000");
 			end if;
 		end if;
 	end process;
@@ -366,6 +396,7 @@ begin
 		buf_start	<= "00";
 		buf_instr	<= '0';
 		pos_y_off	<= 0;
+		pos_y_tmr 	<= 0;
 		
 		if(pos_y_nxt > 8 and pos_y_nxt < 73) then
 			buf_instr	<= '0';
@@ -374,7 +405,7 @@ begin
 			buf_instr	<= '1';
 			pos_y_off	<= 407;
 			if((pos_y_nxt > 422) and (pos_y_nxt < 455)) then
-				
+				pos_y_tmr <= 423;
 			end if;
 		elsif((pos_y_nxt >  81 and pos_y_nxt <  86) or (pos_y_nxt > 117 and pos_y_nxt < 120) or (pos_y_nxt > 151 and pos_y_nxt < 154) or 
 			(pos_y_nxt > 185 and pos_y_nxt < 190) or (pos_y_nxt > 221 and pos_y_nxt < 224) or (pos_y_nxt > 255 and pos_y_nxt < 258) or
@@ -413,27 +444,27 @@ begin
 			end case;
 		elsif(pos_y_nxt > 257 and pos_y_nxt < 290) then
 			cnt_y 		<= "0110";
+			buf_lbl_key	<= "0010";	-- Restart
 			buf_start	<= "10";
 			pos_y_off	<= 258;
 		elsif(pos_y_nxt > 293 and pos_y_nxt < 326) then
 			cnt_y 		<= "0111";
-			buf_lbl_key	<= "0010";	-- Restart
 			buf_start	<= "10";
 			pos_y_off	<= 294;
 		elsif(pos_y_nxt > 327 and pos_y_nxt < 360) then
 			cnt_y 		<= "1000";
+			buf_lbl_key	<= "0011";	-- Exit
 			buf_start	<= "10";
 			pos_y_off	<= 328;
 		elsif(pos_y_nxt > 361 and pos_y_nxt < 394) then
 			cnt_y 		<= "1001";
-			buf_lbl_key	<= "0011";	-- Exit
 			buf_start	<= "10";
 			pos_y_off	<= 362;
 		end if;
 	end process;
 	
 	-- 
-	process(vga_pos_x, vga_pos_y, buf_lne_cur, buf_lbl_cur, buf_lbl_top_cur)
+	process(vga_pos_x, vga_pos_y, buf_lne_cur, buf_lbl_cur, buf_lbl_top_cur, buf_lbl_tmr_cur)
 	begin
 		-- calc y-position of next display line
 		if(vga_pos_y < PXL_DSP_V - 1) then
@@ -450,18 +481,20 @@ begin
 		
 		-- output pixel-data to vga-controller
 		if(vga_pos_x < PXL_DSP_H and vga_pos_y < PXL_DSP_V) then
-			if((vga_pos_x > PXL_SEP_X - 1) and (vga_pos_x < PXL_SEP_X + PXL_SEP_WDT)) then	-- vertical separation line
+			if((vga_pos_x > PXL_SEP_X - 1) and (vga_pos_x < PXL_SEP_X + PXL_SEP_WDT)) then								-- vertical separation line
 				vga_dat_o <= "001";
---			elsif(((vga_pos_x > 483) and (vga_pos_x < 640)) and ((vga_pos_y > 393) and (vga_pos_y < 398))) then	-- short horizontal separation line
---				vga_dat_o <= "001";
+			elsif(((vga_pos_x > 483) and (vga_pos_x < 640)) and ((vga_pos_y > 81) and (vga_pos_y < 86))) then		-- upper short horizontal separation line
+				vga_dat_o <= "001";
+			elsif(((vga_pos_x > 483) and (vga_pos_x < 640)) and ((vga_pos_y > 393) and (vga_pos_y < 398))) then	-- lower short horizontal separation line
+				vga_dat_o <= "001";
 			else
-				if(((vga_pos_x > 81) and (vga_pos_x < 398)) and ((vga_pos_y > 81) and (vga_pos_y < 398))) then	-- sudoku field
+				if(((vga_pos_x > 81) and (vga_pos_x < 398)) and ((vga_pos_y > 81) and (vga_pos_y < 398))) then			-- sudoku field
 					vga_dat_o <= buf_lne_cur(vga_pos_x - 82);
-				elsif(((vga_pos_x > 497) and (vga_pos_x < 626)) and ((vga_pos_y > 81) and (vga_pos_y < 398))) then -- righthand menu
+				elsif(((vga_pos_x > 497) and (vga_pos_x < 626)) and ((vga_pos_y > 81) and (vga_pos_y < 398))) then 	-- righthand menu
 					vga_dat_o <= buf_lbl_cur(vga_pos_x - 498);
-				elsif(((vga_pos_x > 111) and (vga_pos_x < 368)) and ((vga_pos_y > 8) and (vga_pos_y < 73))) then -- sudoku label
+				elsif(((vga_pos_x > 111) and (vga_pos_x < 368)) and ((vga_pos_y > 8) and (vga_pos_y < 73))) then 		-- sudoku label
 					vga_dat_o <= buf_lbl_top_cur(vga_pos_x - 112);	
-				elsif(((vga_pos_x > 111) and (vga_pos_x < 368)) and ((vga_pos_y > 406) and (vga_pos_y < 471))) then -- credits label
+				elsif(((vga_pos_x > 111) and (vga_pos_x < 368)) and ((vga_pos_y > 406) and (vga_pos_y < 471))) then	-- credits label
 					vga_dat_o <= buf_lbl_top_cur(vga_pos_x - 112);
 				elsif(((vga_pos_x > 501) and (vga_pos_x < 622)) and ((vga_pos_y > 422) and (vga_pos_y < 455))) then
 					vga_dat_o <= buf_lbl_tmr_cur(vga_pos_x - 502);

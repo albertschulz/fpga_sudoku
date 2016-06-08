@@ -89,7 +89,7 @@ architecture rtl of ccu_top is
 	signal sig_tmr_en			: std_logic;
 	
 	-- from: CLK-Timer
-	signal sig_tme_out		: std_logic_vector(12 downto 0);
+	signal sig_tme_out		: std_logic_vector(14 downto 0);
   
 begin
 	-- PS2-Dat-Decoder

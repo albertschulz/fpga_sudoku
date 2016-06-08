@@ -18,6 +18,7 @@ port
 	rst		: in std_logic;
 	start		: in std_logic;
 	done		: out std_logic;
+	filled 	: out std_logic;
 	correct 	: out std_logic;
 	
 	-- RAM Connection
@@ -101,14 +102,17 @@ architecture rtl of solution_checker is
 	
 	type T_ONEHOT_NUMBERS_VECTOR is array (0 to 8) of std_logic_vector(8 downto 0);
 	
-	signal row_digits			: T_ONEHOT_NUMBERS_VECTOR	:= (others => (others => '0'));
-	signal row_digits_nxt : T_ONEHOT_NUMBERS_VECTOR;
+	signal row_digits				: T_ONEHOT_NUMBERS_VECTOR	:= (others => (others => '0'));
+	signal row_digits_nxt		: T_ONEHOT_NUMBERS_VECTOR;
 	
-	signal col_digits			: T_ONEHOT_NUMBERS_VECTOR	:= (others => (others => '0'));
-	signal col_digits_nxt : T_ONEHOT_NUMBERS_VECTOR;
+	signal col_digits				: T_ONEHOT_NUMBERS_VECTOR	:= (others => (others => '0'));
+	signal col_digits_nxt 		: T_ONEHOT_NUMBERS_VECTOR;
 	
 	signal square_digits			: T_ONEHOT_NUMBERS_VECTOR	:= (others => (others => '0'));
-	signal square_digits_nxt 	: T_ONEHOT_NUMBERS_VECTOR;
+	signal square_digits_nxt	: T_ONEHOT_NUMBERS_VECTOR;
+	
+	signal filled_reg				: std_logic := '0';
+	signal filled_nxt				: std_logic;
 
 begin
 
@@ -116,14 +120,16 @@ begin
 	begin
 		if rising_edge(clk) then
 			if rst = '1' then
-				state_cur 				<= IDLE;
-				row_digits				<= (others => (others => '0'));
-				col_digits				<= (others => (others => '0'));
-				square_digits			<= (others => (others => '0'));
+				state_cur 		<= IDLE;
+				filled_reg		<= '0';
+				row_digits		<= (others => (others => '0'));
+				col_digits		<= (others => (others => '0'));
+				square_digits	<= (others => (others => '0'));
 			else
-				state_cur			<= state_nxt;
-				x							<= x_nxt;
-				y							<= y_nxt;
+				state_cur		<= state_nxt;
+				filled_reg		<= filled_nxt;
+				x					<= x_nxt;
+				y					<= y_nxt;
 				row_digits		<= row_digits_nxt;
 				col_digits		<= col_digits_nxt;
 				square_digits	<= square_digits_nxt;
@@ -131,34 +137,36 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, ram_dat_i, start, x , y, row_digits, col_digits, square_digits)
-		variable y_int : integer := to_integer(y);
-		variable x_int : integer := to_integer(x);
+	process(state_cur, ram_dat_i, start, x , y, row_digits, col_digits, square_digits, filled_reg)
+		variable y_int 			: integer := to_integer(y);
+		variable x_int 			: integer := to_integer(x);
 		variable number_missing : boolean := false;
 	begin
-		state_nxt 				<= state_cur;
+		state_nxt 			<= state_cur;
+		filled_nxt			<= filled_reg;
 		row_digits_nxt		<= row_digits;
 		col_digits_nxt		<= col_digits;
 		square_digits_nxt	<= square_digits;
-		x_nxt							<= x;
-		y_nxt							<= y;
-		done							<= '0';
-		correct						<= '0';
+		x_nxt					<= x;
+		y_nxt					<= y;
+		done					<= '0';
+		correct				<= '0';
 		
-		ram_adr_o 				<= (others => '0');
+		ram_adr_o 			<= (others => '0');
 		
-		number_missing := false;
+		number_missing 	:= false;
 	
 		case state_cur is
 			when IDLE =>
-			
+				
 				if start = '1' then
-					state_nxt	<= READ_RAM;
-					x_nxt <= to_unsigned(0, x_nxt'length);
-					y_nxt <= to_unsigned(0, x_nxt'length);
-					row_digits_nxt		<=  (others => (others => '0'));
-					col_digits_nxt		<=  (others => (others => '0'));
-					square_digits_nxt	<=  (others => (others => '0'));
+					state_nxt			<= READ_RAM;
+					filled_nxt			<= '0';
+					x_nxt 				<= to_unsigned(0, x_nxt'length);
+					y_nxt 				<= to_unsigned(0, x_nxt'length);
+					row_digits_nxt		<= (others => (others => '0'));
+					col_digits_nxt		<= (others => (others => '0'));
+					square_digits_nxt	<= (others => (others => '0'));
 				end if;
 				
 			when READ_RAM =>
@@ -177,8 +185,8 @@ begin
 					y_int := to_integer(y);
 					x_int := to_integer(x);
 				
-					row_digits_nxt(y_int)											<= row_digits(y_int) or bin2onehot(ram_dat_i(3 downto 0))(9 downto 1);
-					col_digits_nxt(x_int) 										<= row_digits(x_int) or bin2onehot(ram_dat_i(3 downto 0))(9 downto 1);
+					row_digits_nxt(y_int)							<= row_digits(y_int) or bin2onehot(ram_dat_i(3 downto 0))(9 downto 1);
+					col_digits_nxt(x_int) 							<= row_digits(x_int) or bin2onehot(ram_dat_i(3 downto 0))(9 downto 1);
 					square_digits_nxt(xy_to_int(x_int,y_int)) <= square_digits(xy_to_int(x_int,y_int)) or bin2onehot(ram_dat_i(3 downto 0))(9 downto 1);
 				
 					-- Increase Counters (row, column)
@@ -206,21 +214,23 @@ begin
 					number_missing := true;
 				end if;
 				
+				filled_nxt 	<= '1';
+				
 				if number_missing = true then
 					state_nxt <= NOT_SOLVED;
 				else
 					state_nxt <= SOLVED;
 				end if;
-			
+				
 			when SOLVED =>
-				done 		<= '1';
-				correct	<= '1';
+				done 			<= '1';
+				correct		<= '1';
 				
 				state_nxt <= IDLE;
 			
 			when NOT_SOLVED =>
-				done		<= '1';
-				correct	<= '0';
+				done			<= '1';
+				correct		<= '0';
 				
 				state_nxt <= IDLE;
 			
@@ -229,4 +239,7 @@ begin
 			
 		end case;
 	end process;
+	
+	filled <= filled_reg;
+	
 end rtl;

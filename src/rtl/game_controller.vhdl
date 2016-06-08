@@ -75,6 +75,7 @@ architecture rtl of game_controller is
 	-- for Solution Checker
 	signal check_game 		: std_logic;
 	signal checked				: std_logic;
+	signal filled				: std_logic;
 	signal correct				: std_logic;
 	signal sc_ram_adr_o		: std_logic_vector(7 downto 0);
 	signal sc_ram_dat_i		: std_logic_vector(5 downto 0);
@@ -94,6 +95,7 @@ begin
 		rst 			=> rst,
 		start 		=> check_game,
 		done 			=> checked,
+		filled		=> filled,
 		correct 		=> correct,
 		ram_adr_o	=> sc_ram_adr_o,
 		ram_dat_i	=> ram_dat_i
@@ -127,7 +129,7 @@ begin
 		end if;
 	end process;
 	
-	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg, tmr_rst_reg, tmr_en_reg, game_won_reg)
+	process(state_cur, instr_i, tsk_stp, instr_reg, game_loaded, checked, filled, correct, game_solved_reg, game_state_reg, game_btn_act_reg, game_diff_reg, tmr_rst_reg, tmr_en_reg, game_won_reg)
 	begin
 		state_nxt			<= state_cur;
 		instr_nxt			<= instr_reg;
@@ -240,7 +242,7 @@ begin
 						game_btn_act_nxt	<= "0001";
 					end if;
 				elsif(instr_i = CMD_MNU) then
-					if(game_state_reg = '1') then
+					if(game_state_reg = '1' and filled = '0') then
 						state_nxt			<= IDLE;
 						game_btn_act_nxt	<= "0000";
 					end if;					
@@ -268,12 +270,18 @@ begin
 				if checked = '1' then
 					state_nxt <= IDLE;
 					
-					if correct = '1' then	-- Solution is correct
-						game_solved_nxt	<= '1';
-						game_won_nxt		<= "11";
-					else							-- Solution is not correct
-						game_solved_nxt <= '0';
-						game_won_nxt		<= "10";
+					if(filled = '1') then
+						state_nxt 			<= BUSY;
+						game_btn_act_nxt 	<= "0010";
+						tmr_en_nxt 			<= '0';
+						
+						if correct = '1' then	-- Solution is correct
+							game_solved_nxt	<= '1';
+							game_won_nxt		<= "11";
+						else							-- Solution is not correct
+							game_solved_nxt 	<= '0';
+							game_won_nxt		<= "10";
+						end if;
 					end if;
 				end if;
 				
@@ -408,6 +416,8 @@ begin
 		end if;
 	end process;
 	
+	tmr_rst			<= tmr_rst_reg;
+	tmr_en			<= tmr_en_reg;
 	game_state 		<= game_state_reg;
 	game_menu 		<= game_menu_reg;
 	game_won 		<= game_won_reg;
