@@ -87,7 +87,6 @@ architecture rtl of ccu_top is
 	signal sig_game_btn_act	: std_logic_vector(3 downto 0);
 	signal sig_tmr_rst		: std_logic;
 	signal sig_tmr_en			: std_logic;
-	signal sig_tme_en			: std_logic;
 	
 	-- from: CLK-Timer
 	signal sig_tme_out		: std_logic_vector(12 downto 0);
@@ -109,7 +108,6 @@ begin
 	pxl_buf : entity work.pxl_buffer
 		port map(
 			clk 					=> clk,
-			tme_en				=> sig_tme_en,
 			tme_dat_i			=> sig_tme_out,
 			game_state			=> sig_game_state,
 			game_menu			=> sig_game_menu,
@@ -152,8 +150,7 @@ begin
 			game_diff		=> sig_game_diff,
 			game_btn_act	=> sig_game_btn_act,
 			tmr_rst			=> sig_tmr_rst,
-			tmr_en			=> sig_tmr_en,
-			tme_en			=> sig_tme_en
+			tmr_en			=> sig_tmr_en
 		);
 		
 	-- Game Loader

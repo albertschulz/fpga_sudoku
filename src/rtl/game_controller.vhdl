@@ -36,8 +36,7 @@ entity game_controller is
 		load_old_game	: out std_logic;
 		
 		tmr_rst			: out	std_logic;
-		tmr_en			: out	std_logic;
-		tme_en			: out	std_logic
+		tmr_en			: out	std_logic
 	);	
 end game_controller;
 
@@ -274,6 +273,7 @@ begin
 						game_won_nxt		<= "11";
 					else							-- Solution is not correct
 						game_solved_nxt <= '0';
+						game_won_nxt		<= "10";
 					end if;
 				end if;
 				
