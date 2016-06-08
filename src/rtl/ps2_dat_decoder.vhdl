@@ -108,6 +108,14 @@ begin
 								when x"7C"	=>					-- '*'	-> 7C
 									seg_code <= x"A912A1C";
 									ins_code	<= CMD_MNU;
+								
+								when x"7B"	=>					-- '-'	-> 7B
+									seg_code <= x"0000000";
+									ins_code	<= CMD_NOP;
+									
+								when x"79"	=>					-- '+'	-> 79
+									seg_code <= x"0000000";
+									ins_code	<= CMD_NOP;
 									
 								when x"5A"	=>					-- 'Enter' -> E0,5A
 									seg_code <= x"01E6A78";

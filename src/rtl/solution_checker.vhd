@@ -158,10 +158,10 @@ begin
 	
 		case state_cur is
 			when IDLE =>
+				filled_nxt			<= '0';
 				
 				if start = '1' then
 					state_nxt			<= READ_RAM;
-					filled_nxt			<= '0';
 					x_nxt 				<= to_unsigned(0, x_nxt'length);
 					y_nxt 				<= to_unsigned(0, x_nxt'length);
 					row_digits_nxt		<= (others => (others => '0'));

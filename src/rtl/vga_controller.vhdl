@@ -58,6 +58,9 @@ architecture rtl of vga_controller is
 	signal bit_val : std_logic;										-- value for current bit, '1' if it is set
 	signal is_fix	: std_logic;										-- '1' if the number is fixed
 	signal is_act	: std_logic;										-- '1' if the current field is active
+	
+	signal color_fx_cnt : unsigned(1 downto 0) := "00";
+	signal color_bg_cnt : unsigned(1 downto 0) := "00";
 
 begin	
 	-- VGA-Pixel-Clock-PLL
@@ -133,9 +136,28 @@ begin
 				if(disp_en = '1') then					-- display is enabled
 					if(vga_dat_i(0) = '1') then
 						if(vga_dat_i(1) = '1') then 	-- number is grey if fixed
-							vga_red_o <= "0100";
-							vga_gre_o <= "0100";
-							vga_blu_o <= "0100";
+							case color_fx_cnt is
+								when "00" =>
+									vga_red_o <= "0100";
+									vga_gre_o <= "0100";
+									vga_blu_o <= "0100";		
+								when "01" =>
+									vga_red_o <= "0100";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "0000";		
+								when "10" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "0100";
+								when "11" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "0100";
+									vga_blu_o <= "0000";		
+								when others =>
+									vga_red_o <= "0100";
+									vga_gre_o <= "0100";
+									vga_blu_o <= "0100";		
+							end case;
 						else									-- otherwise black
 							vga_red_o <= "0000";
 							vga_gre_o <= "0000";
@@ -147,9 +169,28 @@ begin
 							vga_gre_o <= "1100";
 							vga_blu_o <= "1100";
 						else									-- otherwise white
-							vga_red_o <= "1111";
-							vga_gre_o <= "1111";
-							vga_blu_o <= "1111";
+							case color_bg_cnt is
+								when "00" =>
+									vga_red_o <= "1111";
+									vga_gre_o <= "1111";
+									vga_blu_o <= "1111";		
+								when "01" =>
+									vga_red_o <= "1111";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "0000";		
+								when "10" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "1111";
+								when "11" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "1111";
+									vga_blu_o <= "0000";		
+								when others =>
+									vga_red_o <= "1111";
+									vga_gre_o <= "1111";
+									vga_blu_o <= "1111";		
+							end case;
 						end if;
 					end if;
 				else											-- display is disabled
