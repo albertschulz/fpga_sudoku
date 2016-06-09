@@ -16,6 +16,9 @@ entity system_top is
 		clk	      	: in  std_logic;
 		rst_a				: in  std_logic;
 		
+		btn_col_1		: in  std_logic;
+		btn_col_2		: in  std_logic;
+		
 		ps2_clk			: in	std_logic;
 		ps2_dat			: in	std_logic;
 		
@@ -120,6 +123,8 @@ begin
 		port map(
 			clk				=> clk,
 			rst				=> rst,
+			btn_col_1		=> btn_col_1,
+			btn_col_2		=> btn_col_2,
 			vga_dat_i		=> sig_vga_dat_o,
 			vga_pos_x		=> sig_vga_pos_x,
 			vga_pos_y		=> sig_vga_pos_y,

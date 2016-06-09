@@ -54,13 +54,15 @@ architecture rtl of game_controller is
 	signal game_state_reg	: std_logic := '0';								-- '0' -> start, 		'1' -> playing
 	signal game_state_nxt	: std_logic;
 	signal game_menu_reg		: std_logic := '1';								-- '0' -> game field,'1' -> menu
-	--signal game_menu_nxt		: std_logic;
 	signal game_diff_reg		: std_logic_vector(1 downto 0) := "01";	-- "01" -> easy, "10" -> medium, "11" -> hard
 	signal game_diff_nxt		: std_logic_vector(1 downto 0);
 	signal game_won_reg		: std_logic_vector(1 downto 0) := "00";	-- "11" -> won, "10" -> lost
 	signal game_won_nxt		: std_logic_vector(1 downto 0);
 	signal game_btn_act_reg	: std_logic_vector(3 downto 0) := "0001";
 	signal game_btn_act_nxt	: std_logic_vector(3 downto 0);
+	
+	signal mnu_lock_reg		: std_logic := '0';
+	signal mnu_lock_nxt		: std_logic;
 	
 	-- current position
 	signal cnt_x				: unsigned(3 downto 0) := "0101";
@@ -115,6 +117,7 @@ begin
 				game_btn_act_reg	<= "0001";
 				tmr_rst_reg			<= '0';
 				tmr_en_reg			<= '0';
+				mnu_lock_reg		<= '0';
 			else
 				state_cur 			<= state_nxt;
 				instr_reg			<= instr_nxt;
@@ -125,6 +128,7 @@ begin
 				game_btn_act_reg	<= game_btn_act_nxt;
 				tmr_rst_reg			<= tmr_rst_nxt;
 				tmr_en_reg			<= tmr_en_nxt;
+				mnu_lock_reg		<= mnu_lock_nxt;
 			end if;
 		end if;
 	end process;
@@ -140,6 +144,7 @@ begin
 		game_won_nxt		<= game_won_reg;
 		game_btn_act_nxt	<= game_btn_act_reg;
 		game_solved_nxt	<= game_solved_reg;
+		mnu_lock_nxt		<= mnu_lock_reg;
 		tsk_sta				<= "00";
 		load_game			<= '0';
 		load_old_game		<= '0';
@@ -242,7 +247,7 @@ begin
 						game_btn_act_nxt	<= "0001";
 					end if;
 				elsif(instr_i = CMD_MNU) then
-					if(game_state_reg = '1' and filled = '0') then
+					if(game_state_reg = '1' and mnu_lock_reg = '0') then
 						state_nxt			<= IDLE;
 						game_btn_act_nxt	<= "0000";
 					end if;					
@@ -256,6 +261,7 @@ begin
 					game_won_nxt	<= "00";
 					tmr_rst_nxt		<= '0';
 					tmr_en_nxt		<= '1';
+					mnu_lock_nxt	<= '0';
 				end if;
 				
 			when SETTING =>
@@ -274,6 +280,7 @@ begin
 						state_nxt 			<= BUSY;
 						game_btn_act_nxt 	<= "0010";
 						tmr_en_nxt 			<= '0';
+						mnu_lock_nxt		<= '1';
 						
 						if correct = '1' then	-- Solution is correct
 							game_solved_nxt	<= '1';

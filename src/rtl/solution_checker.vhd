@@ -158,9 +158,9 @@ begin
 	
 		case state_cur is
 			when IDLE =>
-				filled_nxt			<= '0';
-				
+							
 				if start = '1' then
+					filled_nxt			<= '0';
 					state_nxt			<= READ_RAM;
 					x_nxt 				<= to_unsigned(0, x_nxt'length);
 					y_nxt 				<= to_unsigned(0, x_nxt'length);

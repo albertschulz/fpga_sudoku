@@ -34,6 +34,8 @@ entity vga_controller is
 	port(
 		clk	      : in  std_logic;
 		rst			: in  std_logic;
+		btn_col_1	: in  std_logic;
+		btn_col_2	: in  std_logic;
 		vga_dat_i	: in	std_logic_vector(2 downto 0);
 		vga_pos_x	: out	integer range 0 to H_PXL;
 		vga_pos_y	: out	integer range 0 to V_PXL;
@@ -59,8 +61,13 @@ architecture rtl of vga_controller is
 	signal is_fix	: std_logic;										-- '1' if the number is fixed
 	signal is_act	: std_logic;										-- '1' if the current field is active
 	
-	signal color_fx_cnt : unsigned(1 downto 0) := "00";
-	signal color_bg_cnt : unsigned(1 downto 0) := "00";
+	signal btn1_meta		: std_logic := '0';
+	signal btn2_meta		: std_logic := '0';
+	signal btn1_press		: std_logic;
+	signal btn2_press		: std_logic;
+	
+	signal color_fx_cnt : unsigned(2 downto 0) := "000";		-- fixed number color code
+	signal color_bg_cnt : unsigned(2 downto 0) := "000";		-- background color code
 
 begin	
 	-- VGA-Pixel-Clock-PLL
@@ -69,6 +76,12 @@ begin
 			inclk0	=> clk,
 			c0			=> vga_clk
 		);
+	
+	-- Button Synchronizer
+	btn1_meta	<= not btn_col_1 when rising_edge(clk);
+	btn2_meta	<= not btn_col_2 when rising_edge(clk);
+	btn1_press 	<= btn1_meta  when rising_edge(clk);
+	btn2_press 	<= btn2_meta  when rising_edge(clk);
 
 	-- VGA Controller
 	process(vga_clk)
@@ -81,7 +94,22 @@ begin
 				h_pos 		<= 0;
 				v_pos 		<= 0;
 			else
-
+				if(btn1_press = '1') then
+					if(color_fx_cnt = "011") then
+						color_fx_cnt <= "000";
+					else
+						color_fx_cnt <= color_fx_cnt + 1;
+					end if;
+				end if;
+				
+				if(btn2_press = '1') then
+					if(color_bg_cnt = "011") then
+						color_bg_cnt <= "000";
+					else
+						color_bg_cnt <= color_bg_cnt + 1;
+					end if;
+				end if;
+				
 				-- current position
 				if(h_pos < H_SUM) then
 					h_pos <= h_pos + 1;
@@ -137,26 +165,26 @@ begin
 					if(vga_dat_i(0) = '1') then
 						if(vga_dat_i(1) = '1') then 	-- number is grey if fixed
 							case color_fx_cnt is
-								when "00" =>
-									vga_red_o <= "0100";
-									vga_gre_o <= "0100";
-									vga_blu_o <= "0100";		
-								when "01" =>
-									vga_red_o <= "0100";
+								when "000" =>
+									vga_red_o <= "0101";
+									vga_gre_o <= "0101";
+									vga_blu_o <= "0101";		
+								when "001" =>
+									vga_red_o <= "0101";
 									vga_gre_o <= "0000";
 									vga_blu_o <= "0000";		
-								when "10" =>
+								when "010" =>
 									vga_red_o <= "0000";
 									vga_gre_o <= "0000";
-									vga_blu_o <= "0100";
-								when "11" =>
+									vga_blu_o <= "0101";
+								when "011" =>
 									vga_red_o <= "0000";
-									vga_gre_o <= "0100";
+									vga_gre_o <= "0101";
 									vga_blu_o <= "0000";		
 								when others =>
-									vga_red_o <= "0100";
-									vga_gre_o <= "0100";
-									vga_blu_o <= "0100";		
+									vga_red_o <= "0101";
+									vga_gre_o <= "0101";
+									vga_blu_o <= "0101";		
 							end case;
 						else									-- otherwise black
 							vga_red_o <= "0000";
@@ -170,21 +198,21 @@ begin
 							vga_blu_o <= "1100";
 						else									-- otherwise white
 							case color_bg_cnt is
-								when "00" =>
+								when "000" =>
 									vga_red_o <= "1111";
 									vga_gre_o <= "1111";
 									vga_blu_o <= "1111";		
-								when "01" =>
-									vga_red_o <= "1111";
+								when "001" =>
+									vga_red_o <= "1000";
 									vga_gre_o <= "0000";
 									vga_blu_o <= "0000";		
-								when "10" =>
+								when "010" =>
 									vga_red_o <= "0000";
 									vga_gre_o <= "0000";
-									vga_blu_o <= "1111";
-								when "11" =>
+									vga_blu_o <= "0001";
+								when "011" =>
 									vga_red_o <= "0000";
-									vga_gre_o <= "1111";
+									vga_gre_o <= "0110";
 									vga_blu_o <= "0000";		
 								when others =>
 									vga_red_o <= "1111";
