@@ -65,6 +65,8 @@ architecture rtl of vga_controller is
 	signal btn2_meta		: std_logic := '0';
 	signal btn1_press		: std_logic;
 	signal btn2_press		: std_logic;
+	signal pressed			: std_logic := '0';
+	signal deb_cnt			: integer range 0 to 149999 := 0;
 	
 	signal color_fx_cnt : unsigned(2 downto 0) := "000";		-- fixed number color code
 	signal color_bg_cnt : unsigned(2 downto 0) := "000";		-- background color code
@@ -76,12 +78,6 @@ begin
 			inclk0	=> clk,
 			c0			=> vga_clk
 		);
-	
-	-- Button Synchronizer
-	btn1_meta	<= not btn_col_1 when rising_edge(clk);
-	btn2_meta	<= not btn_col_2 when rising_edge(clk);
-	btn1_press 	<= btn1_meta  when rising_edge(clk);
-	btn2_press 	<= btn2_meta  when rising_edge(clk);
 
 	-- VGA Controller
 	process(vga_clk)
@@ -94,20 +90,46 @@ begin
 				h_pos 		<= 0;
 				v_pos 		<= 0;
 			else
-				if(btn1_press = '1') then
-					if(color_fx_cnt = "011") then
+				-- sync. btn_press
+				btn1_meta	<= not btn_col_1;
+				btn2_meta	<= not btn_col_2;
+				btn1_press 	<= btn1_meta;
+				btn2_press 	<= btn2_meta;
+				
+				-- debounce btn_press
+				if(deb_cnt = 149999) then
+					deb_cnt 	<= 0;
+					pressed 	<= '0';
+				else
+					if(pressed = '1') then
+						if(btn1_press = '1' or btn2_press = '1') then
+							deb_cnt 	<= 0;
+						else
+							deb_cnt	<= deb_cnt + 1;
+						end if;
+					end if;
+				end if;
+			
+				-- btn1_event_press -> inc color code
+				if(btn1_press = '1' and pressed <= '0') then
+					if(color_fx_cnt = "100") then
 						color_fx_cnt <= "000";
 					else
 						color_fx_cnt <= color_fx_cnt + 1;
 					end if;
+					
+					pressed <= '1';
 				end if;
 				
-				if(btn2_press = '1') then
+				-- btn2_event_press -> inc color code
+				if(btn2_press = '1' and pressed <= '0') then
 					if(color_bg_cnt = "011") then
 						color_bg_cnt <= "000";
 					else
 						color_bg_cnt <= color_bg_cnt + 1;
 					end if;
+					
+					pressed <= '1';
 				end if;
 				
 				-- current position
@@ -163,57 +185,61 @@ begin
 				-- if display is enabled -> draw from incoming data
 				if(disp_en = '1') then					-- display is enabled
 					if(vga_dat_i(0) = '1') then
-						if(vga_dat_i(1) = '1') then 	-- number is grey if fixed
+						if(vga_dat_i(1) = '1') then
 							case color_fx_cnt is
 								when "000" =>
 									vga_red_o <= "0101";
 									vga_gre_o <= "0101";
 									vga_blu_o <= "0101";		
 								when "001" =>
-									vga_red_o <= "0101";
-									vga_gre_o <= "0000";
-									vga_blu_o <= "0000";		
-								when "010" =>
-									vga_red_o <= "0000";
-									vga_gre_o <= "0000";
-									vga_blu_o <= "0101";
-								when "011" =>
-									vga_red_o <= "0000";
+									vga_red_o <= "0110";
 									vga_gre_o <= "0101";
 									vga_blu_o <= "0000";		
+								when "010" =>
+									vga_red_o <= "0110";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "0000";
+								when "011" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "0110";
+									vga_blu_o <= "0000";		
+								when "100" =>
+									vga_red_o <= "0000";
+									vga_gre_o <= "0000";
+									vga_blu_o <= "0110";
 								when others =>
 									vga_red_o <= "0101";
 									vga_gre_o <= "0101";
 									vga_blu_o <= "0101";		
 							end case;
-						else									-- otherwise black
+						else
 							vga_red_o <= "0000";
 							vga_gre_o <= "0000";
 							vga_blu_o <= "0000";
 						end if;	
 					else
-						if(vga_dat_i(2) = '1') then 	-- background is light-grey if active
+						if(vga_dat_i(2) = '1') then
 							vga_red_o <= "1100";
 							vga_gre_o <= "1100";
 							vga_blu_o <= "1100";
-						else									-- otherwise white
+						else
 							case color_bg_cnt is
 								when "000" =>
 									vga_red_o <= "1111";
 									vga_gre_o <= "1111";
 									vga_blu_o <= "1111";		
 								when "001" =>
-									vga_red_o <= "1000";
-									vga_gre_o <= "0000";
-									vga_blu_o <= "0000";		
+									vga_red_o <= "1101";
+									vga_gre_o <= "1101";
+									vga_blu_o <= "1111";		
 								when "010" =>
-									vga_red_o <= "0000";
-									vga_gre_o <= "0000";
-									vga_blu_o <= "0001";
+									vga_red_o <= "1010";
+									vga_gre_o <= "1111";
+									vga_blu_o <= "1010";
 								when "011" =>
-									vga_red_o <= "0000";
-									vga_gre_o <= "0110";
-									vga_blu_o <= "0000";		
+									vga_red_o <= "1111";
+									vga_gre_o <= "1101";
+									vga_blu_o <= "1101";		
 								when others =>
 									vga_red_o <= "1111";
 									vga_gre_o <= "1111";
@@ -229,5 +255,4 @@ begin
 			end if;
 		end if;
 	end process;
-	
 end rtl;

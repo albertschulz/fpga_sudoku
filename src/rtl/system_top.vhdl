@@ -45,6 +45,10 @@ architecture rtl of system_top is
 	-- from: Reset-Synchronizer
 	signal rst     				: std_logic := '0';
 	
+	-- from: Button-Synchronizer
+--	signal sig_but1_o				: std_logic := '0';
+--	signal sig_but2_o				: std_logic := '0';
+	
 	-- from: PS2-Controller
 	signal sig_ps2_dat_o			: std_logic_vector(7 downto 0);
 	signal sig_ps2_dat_en		: std_logic := '0';
@@ -99,6 +103,22 @@ begin
 			rst				=> rst
 		);
 	
+--	-- Button-Synchronizer
+--	btn_syn1 : entity work.btn_synchronizer
+--		port map(
+--			clk				=> clk,
+--			but_i				=> btn_col_1,
+--			but_o				=> sig_but1_o
+--		);
+--		
+--	-- Button-Synchronizer
+--	btn_syn2 : entity work.btn_synchronizer
+--		port map(
+--			clk				=> clk,
+--			but_i				=> btn_col_2,
+--			but_o				=> sig_but2_o
+--		);
+	
 	-- PS2-Controller
 	ps2_ctr : entity work.ps2_controller
 		port map(
@@ -123,8 +143,8 @@ begin
 		port map(
 			clk				=> clk,
 			rst				=> rst,
-			btn_col_1		=> btn_col_1,
-			btn_col_2		=> btn_col_2,
+			btn_col_1		=> btn_col_1,--sig_but1_o,
+			btn_col_2		=> btn_col_2,--sig_but2_o,
 			vga_dat_i		=> sig_vga_dat_o,
 			vga_pos_x		=> sig_vga_pos_x,
 			vga_pos_y		=> sig_vga_pos_y,
