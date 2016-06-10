@@ -1,11 +1,10 @@
 # fpga_sudoku
 ## Sudoku for FPGA implemented in VHDL
 
-### Screenshot
 <img src="https://github.com/albertschulz/fpga_sudoku/blob/4bb0821bdfa4c4c0baa0b17d133a1957fa4dc5a2/Photos/main.jpeg" width="400">
 
 ### Details
-- Game-Language: German
+- Game Language: German
 - Programming Language: VHDL
 - Input: PS/2 Keyboard / Numpad
 - Output: VGA
