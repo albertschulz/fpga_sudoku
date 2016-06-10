@@ -93,6 +93,9 @@ begin
 									seg_code <= x"000006F";
 									ins_code	<= CMD_9;
 									set_flg	<= '0';
+									
+								when x"70"	=>					-- '0' -> 70
+									seg_code <= x"01B7CF8";
 
 								when x"71"	=>					-- 'Del' -> 71
 									seg_code <= x"017BCB8";
@@ -100,12 +103,6 @@ begin
 									set_flg	<= '0';
 									
 								when x"77"	=>					-- 'Num' -> 77	
-									seg_code <= x"01B7CF8";
-									
-								when x"4A"	=>					-- '/'	-> E0, 4A
-									ins_code	<= CMD_DIV;
-									
-								when x"7C"	=>					-- '*'	-> 7C
 									seg_code <= x"A912A1C";
 									ins_code	<= CMD_MNU;
 								
@@ -152,19 +149,16 @@ begin
 								when x"75"	=> 				-- '8' -> 75
 									seg_code <= x"0000054";
 									ins_code	<= CMD_UP;
+									
+								when x"70"	=>					-- '0' -> 70
+									seg_code <= x"01B7CF8";
+									set_flg	<= '1';
 
 								when x"71"	=>					-- 'Del' -> 71
 									seg_code <= x"017BCB8";
 									ins_code	<= CMD_DEL;
 									
 								when x"77"	=>					-- 'Num' -> 77	
-									seg_code <= x"01B7CF8";
-									set_flg	<= '1';
-								
-								when x"4A"	=>					-- '/'	-> E0, 4A
-									ins_code	<= CMD_DIV;
-								
-								when x"7C"	=>					-- '*'	-> 7C
 									seg_code <= x"A912A1C";
 									ins_code	<= CMD_MNU;
 									

@@ -252,4 +252,4 @@ begin
 			q_b				=> open
 		);
 	
-end rtl; 
+end rtl;
