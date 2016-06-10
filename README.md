@@ -2,7 +2,7 @@
 ## Sudoku for FPGA implemented in VHDL
 
 ### Screenshot
-![Image of Yaktocat](https://github.com/albertschulz/fpga_sudoku/blob/793da32368eec9ba753ce7c4eabdfcb84e77a38b/Screenshot/main.jpeg)
+<img src="https://github.com/albertschulz/fpga_sudoku/blob/4bb0821bdfa4c4c0baa0b17d133a1957fa4dc5a2/Photos/main.jpeg" width="400">
 
 ### Details
 - Game-Language: German
