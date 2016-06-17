@@ -4,10 +4,10 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EPCS4) Path("/home/schulz/git/fpga_sudoku/") File("Sudoku.pof") MfrSpec(OpMask(1) Child_OpMask(1 1));
+		Device PartName(EP3C16F484) Path("/home/schulz/git/fpga_sudoku/output_files/") File("Sudoku.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
 AlteraBegin;
-	ChainType(asc);
+	ChainType(JTAG);
 AlteraEnd;
